@@ -53,6 +53,18 @@ def convert_to_markdown(df:pl.DataFrame):
             for project in row['coding_projects'].split(';'):
                     # Reformat "Name: Description" to a cleaner task
                 f.write(f"- [ ] {project.strip()}\n \n")
+
+            f.write("\n## 💻 Coding Lab\n")
+            # Assuming projects are separated by ';' in your database
+            for project in row['non_coding_projects'].split(';'):
+                    # Reformat "Name: Description" to a cleaner task
+                f.write(f"- [ ] {project.strip()}\n \n")
+            
+            f.write("\n## 💻 Coding Lab\n")
+            # Assuming projects are separated by ';' in your database
+            for project in row['online_problem_sets'].split(';'):
+                    # Reformat "Name: Description" to a cleaner task
+                f.write(f"- [ ] {project.strip()}\n \n")
             
             # 4. Resources (Bullet points with Emojis)
             f.write("\n## 🔗 Best video Resources\n")
@@ -69,7 +81,7 @@ def convert_to_markdown(df:pl.DataFrame):
         
 
 if __name__ == "__main__":
-    topic = "Linear recurrence relations (1st and 2nd order)"
+    topic = "Surds and exponents"
 
     prompt = f"""Generate a study database for:
     {topic}. If there are multiple topics make a row for each topic.
@@ -84,6 +96,7 @@ if __name__ == "__main__":
         sub_topics: str
         coding_projects: str
         non_coding_projects: str
+        online_problem_sets:str
         video_resources: str
         text_resources: str
 
@@ -119,7 +132,7 @@ if __name__ == "__main__":
     print("STUDY_GUIDE.md created! Open it in VS Code or Obsidian.")
 
 
-
+ 
 #Need to adjust script so it adds to a main database rather than creating a new database eacht ime!
 
 
