@@ -1,0 +1,382 @@
+
+--- 2026-06-06 14:49:01 ---
+Topic: Group actions
+Subtopics:
+  - Action basics
+  - Burnside lemma and counting orbits
+  - Orbit stabiliser theorem
+
+--- 2026-06-06 17:55:56 ---
+Topic: Trigonometry
+Subtopics:
+  - Unit circle basics
+  - Symmetric properties
+  - Complementary properties
+
+--- 2026-06-11 17:41:25 ---
+Topic: Probability
+Subtopics:
+  - Equally likely outcomes
+  - Multi-turn probability
+  - Terminology (sample space)
+  - Complementary events
+
+--- 2026-06-11 17:42:52 ---
+Topic: Probability
+Subtopics:
+  - Equally likely outcomes
+  - Multi-turn probability
+  - Terminology (sample space)
+  - Complementary events
+
+--- 2026-06-11 17:43:49 ---
+Topic: Probability
+Subtopics:
+  - Equally likely outcomes
+  - Multi-turn probability
+  - Terminology (sample space)
+  - Complementary events
+
+--- 2026-06-11 17:48:26 ---
+Topic: Probability
+Subtopics:
+  - Equally likely outcomes
+  - Multi-turn probability
+  - Terminology (sample space)
+  - Complementary events
+
+--- 2026-06-12 08:07:42 ---
+Topic: Lee-Carter model
+Subtopics:
+  - The Lee–Carter equation
+  - Interpreting the parameters y
+  - Fitting via SVD/PCA
+  - Identifiability constraints
+  - Simulating the model
+
+--- 2026-06-12 17:46:28 ---
+Topic: Algebra basics
+Subtopics:
+  - Substitution into equations
+  - Collecting like terms and arithmetic on expressions
+
+--- 2026-06-12 17:48:50 ---
+Topic: Algebra basics
+Subtopics:
+  - Substitution into equations
+  - Collecting like terms and arithmetic on expressions
+
+--- 2026-06-12 17:57:07 ---
+Topic: Algebra basics
+Subtopics:
+  - Substitution into equations
+  - Collecting like terms and arithmetic on expressions
+
+--- 2026-06-13 09:30:15 ---
+Topic: Special factorisations
+Subtopics:
+  - Square of binomial
+  - Difference of perfect squares
+  - Sum and difference of perfect cubes
+  - Rationalising denominators
+  - Simon's favourite factoring trick
+
+--- 2026-06-13 09:59:05 ---
+Topic: Special factorisations ver 2
+Subtopics:
+  - Square of binomial
+  - Difference of perfect squares
+  - Sum and difference of perfect cubes
+  - Rationalising denominators
+  - Simon's favourite factoring trick
+
+--- 2026-06-13 10:00:53 ---
+Topic: Special factorisations ver 2
+Subtopics:
+  - Square of binomial
+  - Difference of perfect squares
+  - Sum and difference of perfect cubes
+  - Rationalising denominators
+  - Simon's favourite factoring trick
+
+--- 2026-06-13 14:39:20 ---
+Topic: Surds
+Subtopics:
+  - Addition and subtraction of surds
+  - Multiplying and dividing surds
+  - Binomial product
+  - Rationalising denominators
+
+--- 2026-06-13 14:40:05 ---
+Topic: Surds
+Subtopics:
+  - Addition and subtraction of surds
+  - Multiplying and dividing surds
+  - Binomial product
+  - Rationalising denominators
+
+--- 2026-06-13 15:47:58 ---
+Topic: Surds
+Subtopics:
+  - Addition and subtraction of surds
+  - Multiplying and dividing surds
+  - Binomial product
+  - Rationalising denominators
+
+--- 2026-06-13 16:56:25 ---
+Topic: Angles
+Subtopics:
+  - Types of angle: Acute, Obtuse ,etc
+  - Vertically opposite angles
+  - Parallel lines and angles
+  - Angles in polygons
+
+--- 2026-06-14 11:28:14 ---
+Topic: Percentages
+Subtopics:
+  - Converting between fractions, decimals and percentages
+  - Calculating percentages of amounts and amounts as percentages
+  - Application: Mark ups and best buys
+  - Percent increase and decrease
+
+--- 2026-06-14 15:46:10 ---
+Topic: Surds Yr10
+Subtopics:
+  - Simplifying and unsimplifying surds
+  - Adding and subtraction of surds
+  - Multiplying and dividing surds
+  - Rationalising denominators
+
+--- 2026-06-14 16:29:19 ---
+Topic: MLE for Markov jump processes
+Subtopics:
+  - Transtition intensities to survival probability
+  - MLE estimator computation and interpretation
+  - Expected waiting time
+  - Three state model
+
+--- 2026-06-14 16:56:11 ---
+Topic: Power laws basics
+Subtopics:
+  - Addition and subtraction law of exponents
+  - Power of a product law of exponents
+  - zero power law of exponents
+  - distribution of exponents
+  - Combined problems
+
+--- 2026-06-14 17:19:23 ---
+Topic: Linear basics
+Subtopics:
+  - One variable linear equations
+  - Linear inequalities
+  - Graphing straight lines
+  - Finding equation of a line
+  - Length and midpoint
+  - Parallel and perpendicular lines
+  - Simultaneous equations
+
+# 2026-06-14 19:03:50
+TOPIC = 'Number theory'
+SUBTOPICS = [
+    'Prime factorisation',
+    'Factor properties: Count, sum, product',
+    'GCD and LCM basics: definition, product, etc'
+]
+
+# 2026-06-14 19:54:44
+TOPIC = 'Number theory V2'
+SUBTOPICS = [
+    'Prime factorisation',
+    'Number of prime factors'
+]
+
+# 2026-06-14 19:56:05
+TOPIC = 'Number theory V2'
+SUBTOPICS = [
+    'Prime factorisation',
+    'Number of factors'
+]
+
+# 2026-06-14 21:19:19
+TOPIC = 'ETC3430 Week 1'
+SUBTOPICS = [
+    'Distribution of future lifetime random variable',
+    'Consistency condition',
+    'Force of mortality',
+    'Estimating Gompertz and Makeham models from data',
+    'Rate of mortality',
+    'Complete/curate expectation of life',
+    'Interpreting gompertz-makeham parameters',
+    'Constructing lifetable from force of mortality estimates',
+    'Computing mortality predictions',
+    'Converting mortality into probabilities of survival'
+]
+
+# 2026-06-14 21:19:33
+TOPIC = 'ETC3430 Week 1'
+SUBTOPICS = [
+    'Distribution of future lifetime random variable',
+    'Consistency condition',
+    'Force of mortality',
+    'Estimating Gompertz and Makeham models from data',
+    'Rate of mortality',
+    'Complete/curate expectation of life',
+    'Interpreting gompertz-makeham parameters',
+    'Constructing lifetable from force of mortality estimates',
+    'Computing mortality predictions',
+    'Converting mortality into probabilities of survival'
+]
+
+# 2026-06-14 21:36:06
+TOPIC = 'ETC3430 Week 2'
+SUBTOPICS = [
+    'Derive MLE estimator for a dataset assuming homogenous individual survivors with constant force of mortality',
+    'Derive MLE estimator for a dataset assuming heterogenous individual survivors with constant force of mortality',
+    'Derive MLE estimator for a dataset assuming heterogenous individual survivors with a parametric force of mortality (such as Gompertz)',
+    'Perform MLE in general',
+    'Find confidence interval of MLE estimator'
+]
+
+# 2026-06-14 21:45:59
+TOPIC = 'ETC3430 Week 1'
+SUBTOPICS = [
+    'Distribution of future lifetime random variable',
+    'Consistency condition',
+    'Force of mortality',
+    'Estimating Gompertz and Makeham models from data',
+    'Rate of mortality',
+    'Complete/curtate expectation of life',
+    'Interpreting gompertz-makeham parameters',
+    'Constructing lifetable from force of mortality estimates',
+    'Computing mortality predictions',
+    'Converting mortality into probabilities of survival'
+]
+
+# 2026-06-14 23:27:04
+TOPIC = 'ETC3430 Week 1'
+SUBTOPICS = [
+    'Distribution of future lifetime random variable',
+    'Consistency condition',
+    'Force of mortality',
+    'Estimating Gompertz and Makeham models from data',
+    'Rate of mortality',
+    'Complete/curtate expectation of life',
+    'Interpreting gompertz-makeham parameters',
+    'Constructing lifetable from force of mortality estimates',
+    'Computing mortality predictions',
+    'Converting mortality into probabilities of survival'
+]
+
+# 2026-06-14 23:28:36
+TOPIC = 'ETC3430 Week 1'
+SUBTOPICS = [
+    'Distribution of future lifetime random variable',
+    'Consistency condition',
+    'Force of mortality',
+    'Estimating Gompertz and Makeham models from data',
+    'Rate of mortality',
+    'Complete/curtate expectation of life',
+    'Interpreting gompertz-makeham parameters',
+    'Constructing lifetable from force of mortality estimates',
+    'Computing mortality predictions',
+    'Converting mortality into probabilities of survival'
+]
+
+# 2026-06-15 13:35:37
+TOPIC = 'ETC3430 Week 3'
+SUBTOPICS = [
+    'Fitting perks law to mortality data',
+    'Fiting a quadratic bezier curve to mortality data',
+    'Poisson distribution for death counts',
+    'Fitting a cubic spline to mortality data',
+    'Checking adherence for estimate mortality parameters: Chi-squared test, cumulative deviation, signs test'
+]
+
+# 2026-06-15 17:27:53
+TOPIC = 'Markov Chains'
+SUBTOPICS = [
+    'Determine whether a given stochastic process is markov',
+    'Finding transition matrix',
+    'Homogenous and non homogenous markov chains',
+    'Probability of State B given State A, n periods ago.',
+    'Probability distribution after t days given an initial distribution',
+    'Stationary distribution and conditions for its existence',
+    'Limiting distribution and conditions for its existence'
+]
+
+# 2026-06-16 11:22:48
+TOPIC = 'Markov Jump processes'
+SUBTOPICS = [
+    'Assumptions behind Markov chains and Markov jump processes',
+    'Generator matrices for Markov jump processes',
+    'Solving Kolmogorov differential equations to find probabilities',
+    'Limiting distribution for Markov jump processes',
+    'Stationary distribution for Markov jump processes',
+    'Poisson process'
+]
+
+# 2026-06-16 13:35:04
+TOPIC = 'Markov Jump processes'
+SUBTOPICS = [
+    'Assumptions behind Markov chains and Markov jump processes',
+    'Generator matrices for Markov jump processes',
+    'Solving Kolmogorov differential equations to find probabilities',
+    'Limiting distribution for Markov jump processes',
+    'Stationary distribution for Markov jump processes',
+    'Poisson process'
+]
+
+# 2026-06-16 13:36:00
+TOPIC = 'Markov Jump processes'
+SUBTOPICS = [
+    'Assumptions behind Markov chains and Markov jump processes',
+    'Generator matrices for Markov jump processes',
+    'Solving Kolmogorov differential equations to find probabilities',
+    'Limiting distribution for Markov jump processes',
+    'Stationary distribution for Markov jump processes',
+    'Poisson process'
+]
+
+# 2026-06-16 13:43:21
+TOPIC = 'Markov Jump processes'
+SUBTOPICS = [
+    'Assumptions behind Markov chains and Markov jump processes',
+    'Generator matrices for Markov jump processes',
+    'Solving Kolmogorov differential equations to find probabilities',
+    'Limiting distribution for Markov jump processes',
+    'Stationary distribution for Markov jump processes',
+    'Poisson process'
+]
+
+# 2026-06-16 14:01:58
+TOPIC = 'Markov Jump processes'
+SUBTOPICS = [
+    'Assumptions behind Markov chains and Markov jump processes',
+    'Generator matrices for Markov jump processes',
+    'Solving Kolmogorov differential equations to find probabilities',
+    'Limiting distribution for Markov jump processes',
+    'Stationary distribution for Markov jump processes',
+    'Poisson process'
+]
+
+# 2026-06-16 14:04:32
+TOPIC = 'Markov Jump processes'
+SUBTOPICS = [
+    'Assumptions behind Markov chains and Markov jump processes',
+    'Generator matrices for Markov jump processes',
+    'Solving Kolmogorov differential equations to find probabilities',
+    'Limiting distribution for Markov jump processes',
+    'Stationary distribution for Markov jump processes',
+    'Poisson process'
+]
+
+# 2026-06-16 14:08:52
+TOPIC = 'Markov Jump processes'
+SUBTOPICS = [
+    'Assumptions behind Markov chains and Markov jump processes',
+    'Generator matrices for Markov jump processes',
+    'Solving Kolmogorov differential equations to find probabilities',
+    'Limiting distribution for Markov jump processes',
+    'Stationary distribution for Markov jump processes',
+    'Poisson process'
+]

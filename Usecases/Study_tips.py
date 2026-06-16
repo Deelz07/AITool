@@ -81,7 +81,7 @@ def convert_to_markdown(df:pl.DataFrame):
         
 
 if __name__ == "__main__":
-    topic = "Surds and exponents"
+    topic = "Hash set"
 
     prompt = f"""Generate a study database for:
     {topic}. If there are multiple topics make a row for each topic.
@@ -117,16 +117,16 @@ if __name__ == "__main__":
     else:
         df_overall = df_out
     
-    df_overall.write_parquet("data.parquet")
+    # df_overall.write_parquet("data.parquet")
         
-    df_overall.write_excel("Output.xlsx")
+    # df_overall.write_excel("Output.xlsx")
 
     print("Success! File created using polars.")
 
 
     #Unhardcode this
     
-    convert_to_markdown(df_overall)
+    convert_to_markdown(df_out)
     
 
     print("STUDY_GUIDE.md created! Open it in VS Code or Obsidian.")
