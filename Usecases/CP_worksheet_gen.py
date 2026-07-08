@@ -1,10 +1,8 @@
 """
-Generate maths homework worksheets from a topic and subtopics by researching
-reputable online resources, then producing a LaTeX question sheet and a matching
-solutions sheet derived from that worksheet.
+Generate competitive programming worksheets from a topic and subtopics by researching
+reputable CP resources, then producing a LaTeX problem sheet and matching worked solutions.
 
 LEGACY VERSION: single-call solutions with automatic continuation if output truncates.
-Use HW_worksheet_generator.py for the current split-section architecture.
 
 Each LLM call can be run separately via the STEP setting. Intermediate files
 are saved under AI_output/ so a failed step can be retried without redoing earlier work.
@@ -33,22 +31,29 @@ from google.genai import types
 MODEL = "gemini-3-flash-preview"
 OUTPUT_DIR = PROJECT_ROOT / "AI_output"
 PAST_QUERIES_FILE = PROJECT_ROOT / "past queries.txt"
-LOG_FILE = OUTPUT_DIR / "hw_generator_og.log"
+LOG_FILE = OUTPUT_DIR / "cp_worksheet_gen.log"
 
-logger = logging.getLogger("hw_worksheet")
+logger = logging.getLogger("cp_worksheet")
 
 # --- Edit these before running ---
-TOPIC = 'One variable linear applications'
+TOPIC = "Constructive problems"
 SUBTOPICS = [
-    "Formulas",
-    "Worded problems",
-    "Linear in disguise"
+    "Pattern based construction",
+    "Greedy construction",
+    "Recursive construction",
+    "Mathematical/bitwise construction",
+    "Graph/Tree construction"
 ]
-CORE_QUESTIONS_PER_SUBTOPIC = 4
-CHALLENGE_QUESTIONS_PER_SUBTOPIC = 3
-TECH_ACTIVE_QUESTIONS_PER_SUBTOPIC = 0
-# Target difficulty for challenge section: AMC, AIME, UKMT Senior, SMMC, etc.
-CONTEST_LEVEL = "AMC 8"
+
+CONCEPTUAL_QUESTIONS_PER_SUBTOPIC = 4
+CONTEST_EASY_QUESTIONS_PER_SUBTOPIC = 2
+CONTEST_MEDIUM_QUESTIONS_PER_SUBTOPIC = 2
+CONTEST_HARD_QUESTIONS_PER_SUBTOPIC = 2
+TECH_ACTIVE_QUESTIONS_PER_SUBTOPIC = 1
+# Target difficulty for each contest section — edit freely, e.g. AtCoder ABC C, Codeforces Div. 2 B
+CONTEST_LEVEL_EASY = "AtCoder ABC C"
+CONTEST_LEVEL_MEDIUM = "AtCoder ABC D"
+CONTEST_LEVEL_HARD = "AtCoder ABC E"
 # Run one step at a time: "research", "questions", "solutions", or "all"
 STEP = "all"
 # Set True for geometry/visual topics (uses TikZ diagrams in LaTeX output)
@@ -69,85 +74,101 @@ BATCH_TERMINAL_STATES = {
 }
 
 REPUTABLE_SOURCES = """
-Prioritise content from reputable educational sources such as:
-- Art of Problem Solving (AOPS), Khan Academy, OpenStax, BBC Bitesize, Paul's Online Math Notes
-- MIT OpenCourseWare, university lecture notes, and official exam-board specs (AQA, Edexcel, OCR)
-- Wolfram MathWorld for definitions and standard techniques
-For challenge problems, also study the style of AMC 10/12, AIME, UKMT, USAJMO,IMO and HMMT —
-but write original contest-style problems; never copy existing contest questions.
-For tech-active problems, draw on extended-response CAS exam style (e.g. VCE/Further Maths,
-IB, or senior applied maths tasks) where technology is essential to the method.
+Prioritise content from reputable competitive programming sources such as:
+- CP-Algorithms, USACO Guide, CSES Problem Set, Codeforces EDU / Catalog
+- AtCoder Beginner/Regular Contest archives (for style only — write original problems)
+- ICPC problem archives, Kattis, and official contest editorials for technique reference
+- William Lin / Errichto / SecondThread educational material, USACO training pages
+For contest problems, study the style of Codeforces Div. 2 A–D, AtCoder ABC B–F,
+USACO Bronze/Silver/Gold, and ICPC regional problems — but write original problems;
+never copy existing contest statements.
+For implementation/analysis problems, draw on tasks where careful I/O handling,
+edge cases, complexity justification, and pseudocode or solution sketches matter.
 """
 
-TECH_ACTIVE_STYLE = """
-Tech Active problems assume students have a CAS calculator (e.g. TI-Nspire CAS, Casio ClassPad).
-These are extended-response tasks, not short contest problems.
+IMPLEMENTATION_STYLE = """
+Implementation & Analysis problems assume students are training for timed CP contests
+(C++ or Python). These are extended-response tasks, not bare "implement this loop" drills.
 
 Design principles:
-- Require genuine use of CAS features: solve, factor, graph, numerical solve, tables, regression,
-  or parameter exploration—not just arithmetic a calculator could do in one line.
-- Do NOT reuse contest-style questions that become trivial with technology (e.g. bare factorisation,
-  routine equation solving, or insight puzzles that CAS solves instantly without interpretation).
-- Favour multi-part extended response: model a situation, use CAS to analyse, then interpret,
-  justify, or communicate findings in context.
-- Include interpretation, comparison, or verification steps after the calculator work.
-- Problems may ask students to show calculator syntax used (e.g. "Using your CAS, ..." or
-  "State the CAS command or menu path you would use, then ...").
-- Use subparts (a), (b), (c) to scaffold modelling → calculator work → interpretation.
-- Answers may be exact or decimal as appropriate, but reasoning and communication matter.
-- Each problem should take noticeably longer than a contest question (roughly 8-15 minutes).
+- Require genuine algorithmic design: state the approach, justify correctness briefly,
+  and analyse time/space complexity (Big-O with n, m, etc. as in the constraints).
+- Include realistic constraints (e.g. 1 ≤ n ≤ 2×10^5, time limit 2s) when appropriate.
+- Use standard CP problem format when helpful: Input / Output / Constraints / Example.
+- Favour multi-part extended response: (a) explain the idea, (b) give pseudocode or
+  key implementation details, (c) discuss edge cases or why the complexity fits.
+- Do NOT ask for full compilable source code in the worksheet — focus on algorithm,
+  complexity, and implementation pitfalls (overflow, 1-indexing, recursion depth, etc.).
+- Problems may ask students to trace the algorithm on a small example or identify
+  why a naive approach TLEs.
+- Each problem should take noticeably longer than a single contest problem
+  (roughly 10–20 minutes including written analysis).
+"""
+
+CONCEPTUAL_STYLE = """
+Conceptual questions test understanding of ideas, not full contest implementation:
+- Ask "explain why", "what is wrong with this approach", "trace on a small example",
+  "compare two strategies", or "identify the key invariant".
+- Prefer short, precise prompts answerable in a few sentences or a small hand trace.
+- May include tiny numeric examples, pseudocode snippets to critique, or true/false with justification.
+- Do NOT use full Input/Output/Constraints contest statements unless a miniature example helps.
+- These should build intuition for the subtopic before the contest sections.
 """
 
 CONTEST_STYLE = """
-Contest-style challenge problems should feel like original problems from math competitions:
-- Difficulty target: {contest_level} (late problems for that contest, not early warm-ups).
-- Reward insight over computation: a clever substitution, symmetry, factorisation, or invariant
-  should unlock the problem.
-- Prefer exact answers (surds, simplified radicals, integers, or expressions in closed form).
-- Use precise wording: "Find all...", "Determine the exact value of...", "Prove that...",
-  "For how many integers...", "What is the minimum possible value of...".
-- Avoid routine drill exercises in the challenge section (no bare "simplify sqrt(125)").
-- Problems may combine ideas from the topic with contest staples (algebraic manipulation,
-  number sense, inequalities, geometry setup, or counting) when natural.
-- Each problem should be solvable in contest time (roughly 3-6 minutes) once the key idea is found.
-- No calculator assumed.
+Contest-style challenge problems should feel like original problems from CP contests:
+- Difficulty target: {contest_level} (solid for that level, not trivial implementation).
+- Reward the right algorithm/data structure choice: a non-obvious greedy, DP state,
+  graph reduction, binary search on answer, or invariant — not brute force with tweaks.
+- Include clear Input/Output/Constraints when the problem is implementation-oriented;
+  for pure math/constructive CP problems, use precise "Find...", "Determine...", "Prove...".
+- Prefer exact integer answers, YES/NO, or minimum/maximum values with justification.
+- Avoid school-math drill (no bare "simplify" or unrelated calculus).
+- Problems may combine the topic with CP staples (two pointers, sorting, prefix sums,
+  mod arithmetic, bit tricks) when natural.
+- Each problem should be solvable in contest time (roughly 15–45 minutes at the target level)
+  once the key idea is found.
+- No calculator assumed; complexity must fit typical limits (O(n log n), O(n), etc.).
 """
 
 LATEX_RULES = """
 LaTeX Formatting Rules:
-1. Use the 'amsmath' and 'amsfonts' packages.
+1. Use the 'amsmath' and 'amsfonts' packages; add \\usepackage[hidelinks]{hyperref} for URLs.
 2. Ensure all math is wrapped in $...$ for inline and $$...$$ for display.
 3. Output the RAW content only—no markdown wrappers (no ```latex fences).
 4. Number questions from 1 and mark subparts with letters (a), (b), (c), etc.
-5. Keep mathematical expressions on the same line as the question text unless a
+5. Keep mathematical expressions on the same line as the problem text unless a
    display equation is genuinely needed.
+6. For pseudocode or sample I/O, use \\begin{verbatim}...\\end{verbatim} or \\texttt{} for inline.
+7. For Input/Output/Constraints blocks, use a compact format (e.g. \\textbf{Input:} then verbatim).
+8. Do not use \\renewcommand{\\item} with hyperref; use enumitem [resume] if continuing lists.
+9. Put URLs in \\url{...}, not \\texttt{...}.
 """
 
 DIAGRAM_STYLE = """
 DIAGRAM MODE IS ON — work slowly and prioritise diagram accuracy over speed.
 
-Use TikZ for all required figures. Before each diagram, write a one-line plan comment:
-% Diagram plan: <shapes, given lengths/angles, labels>
+Use TikZ for all required figures (graphs, trees, grids, flow sketches). Before each diagram,
+write a one-line plan comment: % Diagram plan: <vertices/edges, labels, what is highlighted>
 
 TikZ setup (include in the document preamble):
 \\usepackage{{tikz}}
-\\usetikzlibrary{{angles, quotes, calc, positioning, arrows.meta}}
+\\usetikzlibrary{{graphs, graphdrawing, positioning, arrows.meta, calc}}
+\\usegdlibrary{{force, layered}}
 
 Drawing rules:
-1. Plan vertex coordinates on paper first; use explicit \\coordinate (A) at (x,y);
+1. For graphs/trees: use explicit node coordinates or a simple layered layout; label vertices clearly.
 2. Wrap each figure in \\begin{{center}}\\begin{{tikzpicture}}[scale=0.85] ... \\end{{tikzpicture}}\\end{{center}}
-3. Label vertices clearly, placed away from edges (e.g. above left of A).
-4. Mark right angles with the angles library; use tick marks for equal lengths.
-5. Keep figures simple: one main shape per diagram, at most one auxiliary line.
-6. The diagram must match the question — if AB = 5 cm is stated, the drawing must look consistent.
-7. Avoid 3D, perspective, or heavily overlapping lines.
+3. Highlight BFS/DFS order, shortest paths, or DSU merges when the question depends on them.
+4. Keep figures readable: avoid crossing edges where possible; use arrows for directed graphs.
+5. The diagram must match the problem statement (edge weights, directions, node names).
 
 Question coverage:
-- Include at least {diagrams_per_subtopic} diagram-backed question(s) per subtopic in Section A.
-- Any question referencing a shape, angle, circle, or labelled point MUST include a diagram.
-- Challenge problems may include diagrams when the visual setup is essential to the insight.
+- Include at least {diagrams_per_subtopic} diagram-backed question(s) per subtopic in Section A (Conceptual).
+- Any problem referencing a graph, tree, grid, or network MUST include a diagram when setup is non-trivial.
+- Contest problems may include diagrams when the visual structure is essential to the insight.
 
-Check each diagram for: correct labels, readable scale, no missing points, compiles without TikZ errors.
+Check each diagram for: correct labels, readable layout, compiles without TikZ errors.
 """
 
 LATEX_RULES_DIAGRAM = LATEX_RULES + """
@@ -211,10 +232,14 @@ def log_run_config(
     subtopics: list[str],
     step: str,
     output_dir: Path,
-    core_per_subtopic: int,
-    challenge_per_subtopic: int,
+    conceptual_per_subtopic: int,
+    contest_easy_per_subtopic: int,
+    contest_medium_per_subtopic: int,
+    contest_hard_per_subtopic: int,
     tech_active_per_subtopic: int,
-    contest_level: str,
+    contest_level_easy: str,
+    contest_level_medium: str,
+    contest_level_hard: str,
     diagram_mode: bool,
     diagrams_per_subtopic: int,
 ) -> None:
@@ -227,18 +252,24 @@ def log_run_config(
     logger.info("  Topic: %s", topic)
     logger.info("  Subtopics (%d): %s", len(cleaned), cleaned)
     logger.info(
-        "  Questions per subtopic: core=%d, challenge=%d, tech_active=%d",
-        core_per_subtopic,
-        challenge_per_subtopic,
+        "  Questions per subtopic: conceptual=%d, contest_easy=%d, contest_medium=%d, contest_hard=%d, tech_active=%d",
+        conceptual_per_subtopic,
+        contest_easy_per_subtopic,
+        contest_medium_per_subtopic,
+        contest_hard_per_subtopic,
         tech_active_per_subtopic,
     )
     logger.info(
-        "  Totals: core=%d, challenge=%d, tech_active=%d",
-        total_questions(cleaned, core_per_subtopic),
-        total_questions(cleaned, challenge_per_subtopic),
+        "  Totals: conceptual=%d, contest_easy=%d, contest_medium=%d, contest_hard=%d, tech_active=%d",
+        total_questions(cleaned, conceptual_per_subtopic),
+        total_questions(cleaned, contest_easy_per_subtopic),
+        total_questions(cleaned, contest_medium_per_subtopic),
+        total_questions(cleaned, contest_hard_per_subtopic),
         total_questions(cleaned, tech_active_per_subtopic),
     )
-    logger.info("  Contest level: %s", contest_level)
+    logger.info("  Contest level (easy): %s", contest_level_easy)
+    logger.info("  Contest level (medium): %s", contest_level_medium)
+    logger.info("  Contest level (hard): %s", contest_level_hard)
     logger.info("  Diagram mode: %s", diagram_mode)
     if diagram_mode:
         logger.info("  Diagrams per subtopic: %d", diagrams_per_subtopic)
@@ -336,8 +367,17 @@ def finalize_solution_document(text: str) -> str:
     return cleaned + "\n"
 
 
-def solutions_document_complete(text: str) -> bool:
-    return text.rstrip().endswith("\\end{document}")
+def solutions_document_complete(text: str, worksheet: str = "") -> bool:
+    if not text.rstrip().endswith("\\end{document}"):
+        return False
+    if worksheet:
+        min_chars = max(1000, int(len(worksheet) * SOLUTIONS_MIN_CHARS_RATIO))
+        if len(text) < min_chars:
+            return False
+    for marker in ("Section C", "Section D", "Section E"):
+        if marker not in text:
+            return False
+    return True
 
 
 def validate_solutions_document(text: str, worksheet: str, expected_questions: int) -> None:
@@ -346,7 +386,7 @@ def validate_solutions_document(text: str, worksheet: str, expected_questions: i
         raise ValueError(
             f"Solutions document too short ({len(text)} chars; expected at least {min_chars})."
         )
-    if not solutions_document_complete(text):
+    if not solutions_document_complete(text, worksheet):
         raise ValueError("Solutions document is missing \\end{document}.")
 
 
@@ -399,7 +439,7 @@ def call_model_batch(client, call_name: str, prompt: str, **kwargs) -> str:
     batch_job = client.batches.create(
         model=model,
         src=[request],
-        config={"display_name": f"hw-{slugify(call_name)}"},
+        config={"display_name": f"cp-{slugify(call_name)}"},
     )
     job_name = batch_job.name
     logger.info("Batch job created: %s", job_name)
@@ -494,22 +534,28 @@ def total_questions(subtopics: list[str], per_subtopic: int) -> int:
 
 def format_distribution(
     subtopics: list[str],
-    core_per_subtopic: int,
-    challenge_per_subtopic: int,
+    conceptual_per_subtopic: int,
+    contest_easy_per_subtopic: int,
+    contest_medium_per_subtopic: int,
+    contest_hard_per_subtopic: int,
     tech_active_per_subtopic: int = TECH_ACTIVE_QUESTIONS_PER_SUBTOPIC,
 ) -> str:
     cleaned = clean_subtopics(subtopics)
     lines = ["Question distribution (strict — follow exactly):"]
     for subtopic in cleaned:
         lines.append(
-            f"- {subtopic}: {core_per_subtopic} core question(s), "
-            f"{challenge_per_subtopic} challenge problem(s), "
-            f"{tech_active_per_subtopic} tech active question(s)"
+            f"- {subtopic}: {conceptual_per_subtopic} conceptual question(s), "
+            f"{contest_easy_per_subtopic} contest-easy problem(s), "
+            f"{contest_medium_per_subtopic} contest-medium problem(s), "
+            f"{contest_hard_per_subtopic} contest-hard problem(s), "
+            f"{tech_active_per_subtopic} implementation & analysis question(s)"
         )
     lines.append(
-        f"Total: {total_questions(cleaned, core_per_subtopic)} core questions, "
-        f"{total_questions(cleaned, challenge_per_subtopic)} challenge problems, "
-        f"{total_questions(cleaned, tech_active_per_subtopic)} tech active questions."
+        f"Total: {total_questions(cleaned, conceptual_per_subtopic)} conceptual questions, "
+        f"{total_questions(cleaned, contest_easy_per_subtopic)} contest-easy problems, "
+        f"{total_questions(cleaned, contest_medium_per_subtopic)} contest-medium problems, "
+        f"{total_questions(cleaned, contest_hard_per_subtopic)} contest-hard problems, "
+        f"{total_questions(cleaned, tech_active_per_subtopic)} implementation & analysis questions."
     )
     lines.append(
         "Do not assign extra questions to broader or harder subtopics. "
@@ -522,30 +568,41 @@ def research_topic(
     client,
     topic: str,
     subtopics: list[str],
-    core_per_subtopic: int = CORE_QUESTIONS_PER_SUBTOPIC,
-    challenge_per_subtopic: int = CHALLENGE_QUESTIONS_PER_SUBTOPIC,
+    conceptual_per_subtopic: int = CONCEPTUAL_QUESTIONS_PER_SUBTOPIC,
+    contest_easy_per_subtopic: int = CONTEST_EASY_QUESTIONS_PER_SUBTOPIC,
+    contest_medium_per_subtopic: int = CONTEST_MEDIUM_QUESTIONS_PER_SUBTOPIC,
+    contest_hard_per_subtopic: int = CONTEST_HARD_QUESTIONS_PER_SUBTOPIC,
     tech_active_per_subtopic: int = TECH_ACTIVE_QUESTIONS_PER_SUBTOPIC,
-    contest_level: str = CONTEST_LEVEL,
+    contest_level_easy: str = CONTEST_LEVEL_EASY,
+    contest_level_medium: str = CONTEST_LEVEL_MEDIUM,
+    contest_level_hard: str = CONTEST_LEVEL_HARD,
     diagram_mode: bool = DIAGRAM_MODE,
     diagrams_per_subtopic: int = DIAGRAMS_PER_SUBTOPIC,
 ) -> str:
     cleaned = clean_subtopics(subtopics)
     subtopic_list = format_subtopics(cleaned)
     distribution = format_distribution(
-        cleaned, core_per_subtopic, challenge_per_subtopic, tech_active_per_subtopic
+        cleaned,
+        conceptual_per_subtopic,
+        contest_easy_per_subtopic,
+        contest_medium_per_subtopic,
+        contest_hard_per_subtopic,
+        tech_active_per_subtopic,
     )
-    contest_style = CONTEST_STYLE.format(contest_level=contest_level)
+    contest_style_easy = CONTEST_STYLE.format(contest_level=contest_level_easy)
+    contest_style_medium = CONTEST_STYLE.format(contest_level=contest_level_medium)
+    contest_style_hard = CONTEST_STYLE.format(contest_level=contest_level_hard)
     diagram_block = diagram_instructions(diagram_mode, diagrams_per_subtopic)
     diagram_research = ""
     if diagram_mode:
         diagram_research = f"""
-8. For each subtopic, plan at least {diagrams_per_subtopic} diagram-backed question(s).
-   For each, sketch a plain-text diagram plan: vertex labels, coordinates or relative layout,
-   given measurements, and what the student must find. Note common TikZ pitfalls to avoid.
+9. For each subtopic, plan at least {diagrams_per_subtopic} diagram-backed question(s).
+   For each, sketch a plain-text diagram plan: graph/tree nodes, edges, weights or directions,
+   and what the student must compute or trace. Note common TikZ pitfalls to avoid.
 """
-    prompt = f"""You are an experienced maths curriculum designer and contest problem writer.
+    prompt = f"""You are an experienced competitive programming coach and problem setter.
 
-Research the topic below using reputable online educational resources.
+Research the topic below using reputable online CP resources.
 {REPUTABLE_SOURCES}
 
 Topic: {topic}
@@ -557,21 +614,34 @@ Subtopics to cover:
 {diagram_block}
 
 Produce structured research notes that include:
-1. Key definitions, formulae, and techniques for each subtopic.
-2. Typical question styles and difficulty progression (introductory to challenging).
-3. Common misconceptions students make.
-4. For each subtopic separately, exactly {core_per_subtopic} core practice question ideas.
+1. Key definitions, algorithms, data structures, and techniques for each subtopic.
+2. Typical problem patterns, constraints, and difficulty progression (warm-up to contest).
+3. Common implementation pitfalls and wrong approaches (TLE, MLE, WA on edge cases).
+4. For each subtopic separately, exactly {conceptual_per_subtopic} conceptual question ideas
+   (explain why, compare approaches, trace small examples, critique pseudocode).
+{CONCEPTUAL_STYLE}
    Do not give one subtopic more ideas because it is broader or harder.
-5. For each subtopic separately, exactly {challenge_per_subtopic} contest-style challenge ideas.
-{contest_style}
-   For each challenge idea, note: the problem statement sketch, the key insight a strong
-   student must spot, and why it fits {contest_level} difficulty.
-6. For each subtopic separately, exactly {tech_active_per_subtopic} Tech Active (CAS calculator)
-   extended-response question ideas.
-{TECH_ACTIVE_STYLE}
-   For each tech active idea, note: the problem sketch, which CAS features are genuinely needed,
-   and why the task is NOT trivialised by having a calculator.
-7. A short list of the online sources you consulted (name and URL where available).
+5. For each subtopic separately, exactly {contest_easy_per_subtopic} contest-style problem ideas
+   at {contest_level_easy} difficulty.
+{contest_style_easy}
+   For each easy-contest idea, note: problem sketch (with constraints if relevant), the key
+   algorithmic insight, expected complexity, and why it fits {contest_level_easy} difficulty.
+6. For each subtopic separately, exactly {contest_medium_per_subtopic} contest-style problem ideas
+   at {contest_level_medium} difficulty.
+{contest_style_medium}
+   For each medium-contest idea, note: problem sketch (with constraints if relevant), the key
+   algorithmic insight, expected complexity, and why it fits {contest_level_medium} difficulty.
+7. For each subtopic separately, exactly {contest_hard_per_subtopic} contest-style problem ideas
+   at {contest_level_hard} difficulty.
+{contest_style_hard}
+   For each hard-contest idea, note: problem sketch (with constraints if relevant), the key
+   algorithmic insight, expected complexity, and why it fits {contest_level_hard} difficulty.
+8. For each subtopic separately, exactly {tech_active_per_subtopic} Implementation & Analysis
+   extended-response problem ideas.
+{IMPLEMENTATION_STYLE}
+   For each implementation idea, note: the problem sketch, what must be analysed in writing
+   (correctness, complexity, edge cases), and why it is not a one-line implementation task.
+9. A short list of the online sources you consulted (name and URL where available).
 {diagram_research}
 
 Write clear plain-text notes only. Do not output LaTeX yet.
@@ -596,27 +666,44 @@ def generate_questions_worksheet(
     topic: str,
     subtopics: list[str],
     research_notes: str,
-    core_per_subtopic: int = CORE_QUESTIONS_PER_SUBTOPIC,
-    challenge_per_subtopic: int = CHALLENGE_QUESTIONS_PER_SUBTOPIC,
+    conceptual_per_subtopic: int = CONCEPTUAL_QUESTIONS_PER_SUBTOPIC,
+    contest_easy_per_subtopic: int = CONTEST_EASY_QUESTIONS_PER_SUBTOPIC,
+    contest_medium_per_subtopic: int = CONTEST_MEDIUM_QUESTIONS_PER_SUBTOPIC,
+    contest_hard_per_subtopic: int = CONTEST_HARD_QUESTIONS_PER_SUBTOPIC,
     tech_active_per_subtopic: int = TECH_ACTIVE_QUESTIONS_PER_SUBTOPIC,
-    contest_level: str = CONTEST_LEVEL,
+    contest_level_easy: str = CONTEST_LEVEL_EASY,
+    contest_level_medium: str = CONTEST_LEVEL_MEDIUM,
+    contest_level_hard: str = CONTEST_LEVEL_HARD,
     diagram_mode: bool = DIAGRAM_MODE,
     diagrams_per_subtopic: int = DIAGRAMS_PER_SUBTOPIC,
 ) -> str:
     cleaned = clean_subtopics(subtopics)
-    num_core = total_questions(cleaned, core_per_subtopic)
-    num_challenge = total_questions(cleaned, challenge_per_subtopic)
+    num_conceptual = total_questions(cleaned, conceptual_per_subtopic)
+    num_contest_easy = total_questions(cleaned, contest_easy_per_subtopic)
+    num_contest_medium = total_questions(cleaned, contest_medium_per_subtopic)
+    num_contest_hard = total_questions(cleaned, contest_hard_per_subtopic)
     num_tech_active = total_questions(cleaned, tech_active_per_subtopic)
     distribution = format_distribution(
-        cleaned, core_per_subtopic, challenge_per_subtopic, tech_active_per_subtopic
+        cleaned,
+        conceptual_per_subtopic,
+        contest_easy_per_subtopic,
+        contest_medium_per_subtopic,
+        contest_hard_per_subtopic,
+        tech_active_per_subtopic,
     )
     subtopic_list = format_subtopics(cleaned)
-    contest_style = CONTEST_STYLE.format(contest_level=contest_level)
+    contest_style_easy = CONTEST_STYLE.format(contest_level=contest_level_easy)
+    contest_style_medium = CONTEST_STYLE.format(contest_level=contest_level_medium)
+    contest_style_hard = CONTEST_STYLE.format(contest_level=contest_level_hard)
     diagram_block = diagram_instructions(diagram_mode, diagrams_per_subtopic)
-    role = "LaTeX expert, geometry diagram specialist, and contest problem writer" if diagram_mode else "LaTeX expert and contest problem writer"
+    role = (
+        "LaTeX expert, CP problem setter, and diagram specialist"
+        if diagram_mode
+        else "LaTeX expert and competitive programming problem setter"
+    )
     preamble = f"You are a {role}. Generate a complete, ready-to-compile .tex file."
     instruction = f"""
-Create a homework worksheet for the topic "{topic}" using the research notes below.
+Create a competitive programming worksheet for the topic "{topic}" using the research notes below.
 
 Subtopics:
 {subtopic_list}
@@ -625,44 +712,69 @@ Subtopics:
 {diagram_block}
 
 Requirements:
-1. Write original questions only—do not include solutions or answers.
-2. Structure the worksheet into three clearly separated sections:
+1. Write original problems only—do not include solutions or answers.
+2. Structure the worksheet into five clearly separated sections:
 
-   **Section A — Core Practice**
+   **Section A — Conceptual Questions**
    - Use a LaTeX subsection for each subtopic (in the order listed above).
-   - In each subsection, include exactly {core_per_subtopic} core questions for that
+   - In each subsection, include exactly {conceptual_per_subtopic} conceptual questions for that
      subtopic only—no more, no fewer.
-   - Number core questions consecutively from 1 to {num_core} across the whole section.
-   - Do not let broader or harder subtopics take extra questions.
+{CONCEPTUAL_STYLE}
+   - Number conceptual questions consecutively from 1 to {num_conceptual} across the whole section.
 
-   **Section B — Challenge Problems (Contest Style)**
-   - Add a LaTeX section titled "Challenge Problems (Contest Style)".
+   **Section B — Contest Problems (Easy)**
+   - Add a LaTeX section titled "Contest Problems — Easy ({contest_level_easy})".
    - Use a LaTeX subsection for each subtopic (same order as Section A).
-   - In each subsection, include exactly {challenge_per_subtopic} challenge problems
+   - In each subsection, include exactly {contest_easy_per_subtopic} contest problems
      for that subtopic only.
-   - Number challenge problems consecutively from C1 to C{num_challenge} across the section.
-   - Write these as original contest problems at {contest_level} difficulty.
-{contest_style}
-   - Each challenge problem must hinge on a non-obvious insight, not longer computation.
-   - Standalone problems only (no multi-part scaffolding that gives away the method).
-   - Use subparts (a), (b), (c) only for UKMT-style multi-stage problems where later
-     parts build on earlier results.
+   - Number easy contest problems consecutively from E1 to E{num_contest_easy} across the section.
+   - Write these as original CP problems at {contest_level_easy} difficulty.
+{contest_style_easy}
+   - Use Input / Output / Constraints / Example blocks when the problem is implementation-style.
+   - Each problem must hinge on choosing the right algorithm or data structure, not longer brute force.
+   - Standalone problems only (no multi-part scaffolding that gives away the full solution path).
 
-   **Section C — Tech Active (CAS Calculator Required)**
-   - Add a LaTeX section titled "Tech Active (CAS Calculator Required)".
-   - State clearly at the start of the section: "A CAS calculator is required for this section."
+   **Section C — Contest Problems (Medium)**
+   - Add a LaTeX section titled "Contest Problems — Medium ({contest_level_medium})".
+   - Use a LaTeX subsection for each subtopic (same order as Section A).
+   - In each subsection, include exactly {contest_medium_per_subtopic} contest problems
+     for that subtopic only.
+   - Number medium contest problems consecutively from M1 to M{num_contest_medium} across the section.
+   - Write these as original CP problems at {contest_level_medium} difficulty.
+{contest_style_medium}
+   - Use Input / Output / Constraints / Example blocks when the problem is implementation-style.
+   - Each problem must hinge on choosing the right algorithm or data structure, not longer brute force.
+   - Standalone problems only (no multi-part scaffolding that gives away the full solution path).
+   - These must be qualitatively harder than Section B — not just longer versions of the easy problems.
+
+   **Section D — Contest Problems (Hard)**
+   - Add a LaTeX section titled "Contest Problems — Hard ({contest_level_hard})".
+   - Use a LaTeX subsection for each subtopic (same order as Section A).
+   - In each subsection, include exactly {contest_hard_per_subtopic} contest problems
+     for that subtopic only.
+   - Number hard contest problems consecutively from H1 to H{num_contest_hard} across the section.
+   - Write these as original CP problems at {contest_level_hard} difficulty.
+{contest_style_hard}
+   - Use Input / Output / Constraints / Example blocks when the problem is implementation-style.
+   - Each problem must hinge on choosing the right algorithm or data structure, not longer brute force.
+   - Standalone problems only (no multi-part scaffolding that gives away the full solution path).
+   - These must be qualitatively harder than Section C — not just longer versions of the medium problems.
+
+   **Section E — Implementation & Analysis**
+   - Add a LaTeX section titled "Implementation \\& Analysis".
+   - State clearly at the start: "Extended written responses required; focus on algorithm,
+     complexity, and edge cases (no full source code required on the worksheet)."
    - Use a LaTeX subsection for each subtopic (same order as Section A).
    - In each subsection, include exactly {tech_active_per_subtopic} extended-response
-     questions for that subtopic only.
-   - Number tech active questions consecutively from T1 to T{num_tech_active} across the section.
-{TECH_ACTIVE_STYLE}
-   - These must be qualitatively different from Section B: do not copy or lightly adapt
-     contest problems that CAS would solve without meaningful interpretation.
-   - Prefer multi-part questions with modelling, calculator use, and written interpretation.
+     problems for that subtopic only.
+   - Number these consecutively from I1 to I{num_tech_active} across the section.
+{IMPLEMENTATION_STYLE}
+   - These must be qualitatively different from Sections B, C, and D: emphasise analysis, pitfalls,
+     and justification—not just "submit a solution to an online judge".
+   - Prefer multi-part questions with (a) algorithm outline, (b) complexity, (c) edge cases.
 
-3. Add a worksheet title matching the topic.
-4. End with a short "Sources consulted" section listing the reputable resources
-   referenced during question design (bullet list, plain text inside the document).
+3. Add a worksheet title matching the topic (e.g. "Graph Algorithms — CP Worksheet").
+4. End with a short "Sources consulted" section listing CP resources referenced (bullet list).
 
 {latex_rules(diagram_mode)}
 """
@@ -684,8 +796,10 @@ Requirements:
 
 def build_solutions_continuation_prompt(
     topic: str,
-    num_core: int,
-    num_challenge: int,
+    num_conceptual: int,
+    num_contest_easy: int,
+    num_contest_medium: int,
+    num_contest_hard: int,
     num_tech_active: int,
     tail: str,
 ) -> str:
@@ -696,9 +810,11 @@ Rules:
 2. Do NOT repeat any content already written below.
 3. Do NOT output \\documentclass, \\usepackage, or \\begin{{document}} again.
 4. Continue question numbering from where you left off until ALL remaining questions are solved:
-   - Section A core questions through {num_core}
-   - Section B challenge problems through C{num_challenge}
-   - Section C tech-active questions through T{num_tech_active}
+   - Section A conceptual questions through {num_conceptual}
+   - Section B easy contest problems through E{num_contest_easy}
+   - Section C medium contest problems through M{num_contest_medium}
+   - Section D hard contest problems through H{num_contest_hard}
+   - Section E implementation & analysis questions through I{num_tech_active}
 5. End the full document with \\end{{document}} once every question is complete.
 
 Last lines already written (continue immediately after this):
@@ -711,58 +827,82 @@ def generate_solutions_worksheet(
     topic: str,
     subtopics: list[str],
     questions_worksheet: str,
-    core_per_subtopic: int = CORE_QUESTIONS_PER_SUBTOPIC,
-    challenge_per_subtopic: int = CHALLENGE_QUESTIONS_PER_SUBTOPIC,
+    conceptual_per_subtopic: int = CONCEPTUAL_QUESTIONS_PER_SUBTOPIC,
+    contest_easy_per_subtopic: int = CONTEST_EASY_QUESTIONS_PER_SUBTOPIC,
+    contest_medium_per_subtopic: int = CONTEST_MEDIUM_QUESTIONS_PER_SUBTOPIC,
+    contest_hard_per_subtopic: int = CONTEST_HARD_QUESTIONS_PER_SUBTOPIC,
     tech_active_per_subtopic: int = TECH_ACTIVE_QUESTIONS_PER_SUBTOPIC,
-    contest_level: str = CONTEST_LEVEL,
+    contest_level_easy: str = CONTEST_LEVEL_EASY,
+    contest_level_medium: str = CONTEST_LEVEL_MEDIUM,
+    contest_level_hard: str = CONTEST_LEVEL_HARD,
     diagram_mode: bool = DIAGRAM_MODE,
     diagrams_per_subtopic: int = DIAGRAMS_PER_SUBTOPIC,
 ) -> str:
     cleaned = clean_subtopics(subtopics)
-    num_core = total_questions(cleaned, core_per_subtopic)
-    num_challenge = total_questions(cleaned, challenge_per_subtopic)
+    num_conceptual = total_questions(cleaned, conceptual_per_subtopic)
+    num_contest_easy = total_questions(cleaned, contest_easy_per_subtopic)
+    num_contest_medium = total_questions(cleaned, contest_medium_per_subtopic)
+    num_contest_hard = total_questions(cleaned, contest_hard_per_subtopic)
     num_tech_active = total_questions(cleaned, tech_active_per_subtopic)
     diagram_block = diagram_instructions(diagram_mode, diagrams_per_subtopic)
     diagram_solutions = ""
     if diagram_mode:
         diagram_solutions = """
-10. For questions with diagrams, reproduce the original diagram verbatim, then add a second
-    "Solution diagram" in grey/dashed lines if auxiliary constructions (altitudes, radii,
-    angle bisectors) clarify the working.
+10. For questions with graph/tree diagrams, reproduce the original diagram verbatim, then add a
+    second "Solution diagram" in grey/dashed lines if auxiliary edges, visited order, or path
+    highlighting clarifies the working.
 """
-    preamble = "You are a LaTeX expert and contest solutions writer. Generate a complete, ready-to-compile .tex file."
+    preamble = (
+        "You are a LaTeX expert and competitive programming solutions writer. "
+        "Generate a complete, ready-to-compile .tex file."
+    )
     instruction = f"""
-Create a worked-solutions sheet for the topic "{topic}" by solving the questions
-in the worksheet below. Do not invent, reword, or substitute different questions.
+Create a worked-solutions sheet for the topic "{topic}" by solving the problems
+in the worksheet below. Do not invent, reword, or substitute different problems.
 {diagram_block}
 
 Requirements:
 1. Mirror the worksheet structure exactly, including each subtopic subsection:
-   - Section A: solutions for core questions 1 to {num_core}
-     ({core_per_subtopic} per subtopic)
-   - Section B: solutions for contest-style challenge problems C1 to C{num_challenge}
-     ({challenge_per_subtopic} per subtopic)
-   - Section C: solutions for Tech Active questions T1 to T{num_tech_active}
+   - Section A: solutions for conceptual questions 1 to {num_conceptual}
+     ({conceptual_per_subtopic} per subtopic)
+   - Section B: solutions for easy contest problems E1 to E{num_contest_easy}
+     ({contest_easy_per_subtopic} per subtopic, {contest_level_easy} level)
+   - Section C: solutions for medium contest problems M1 to M{num_contest_medium}
+     ({contest_medium_per_subtopic} per subtopic, {contest_level_medium} level)
+   - Section D: solutions for hard contest problems H1 to H{num_contest_hard}
+     ({contest_hard_per_subtopic} per subtopic, {contest_level_hard} level)
+   - Section E: solutions for Implementation & Analysis questions I1 to I{num_tech_active}
      ({tech_active_per_subtopic} per subtopic)
-2. For every question, give the question number/label from the worksheet followed by the
-   worked solution. Repeat the full question text only if it is short; otherwise use the
-   label (e.g. \\item[12.], \\textbf{{C4.}}, \\textbf{{T2.}}) and \\textbf{{Solution:}}.
-3. Solve only the questions that appear in the worksheet—same numbering, same meaning.
-4. For contest-style challenge problems ({contest_level} level):
-   - Begin each solution with a one-line "Key idea:" stating the insight.
-   - Then give a clean solution path a contest student would write under time pressure.
-   - Omit tedious arithmetic steps once the method is clear.
-5. For Tech Active (CAS) questions:
-   - Begin each solution with a one-line "CAS approach:" describing the calculator method.
-   - Show representative CAS syntax or menu steps (e.g. solve(), graph + intersection,
-     numerical solve, regression).
-   - Include interpretation of calculator output, not just the final answer.
-   - Note where a by-hand check or restriction on the domain is needed.
-6. If a solution required inference beyond the question statement, label it
+2. For every problem, give the question number/label from the worksheet followed by the
+   worked solution. Repeat the full problem text only if it is short; otherwise use the
+   label (e.g. \\item[12.], \\textbf{{E4.}}, \\textbf{{M3.}}, \\textbf{{H2.}}, \\textbf{{I2.}}) and \\textbf{{Solution:}}.
+3. Solve only the problems that appear in the worksheet—same numbering, same meaning.
+4. For easy contest problems ({contest_level_easy} level):
+   - Begin each solution with a one-line "Key idea:" stating the algorithm or insight.
+   - Then give a clean solution path: approach, correctness sketch, and complexity.
+   - Include sample trace or small example when it clarifies the method.
+   - Omit tedious step-by-step arithmetic once the method is clear.
+5. For medium contest problems ({contest_level_medium} level):
+   - Begin each solution with a one-line "Key idea:" stating the algorithm or insight.
+   - Then give a clean solution path: approach, correctness sketch, and complexity.
+   - Include sample trace or small example when it clarifies the method.
+   - Omit tedious step-by-step arithmetic once the method is clear.
+6. For hard contest problems ({contest_level_hard} level):
+   - Begin each solution with a one-line "Key idea:" stating the algorithm or insight.
+   - Then give a clean solution path: approach, correctness sketch, and complexity.
+   - Include sample trace or small example when it clarifies the method.
+   - Omit tedious step-by-step arithmetic once the method is clear.
+7. For Implementation & Analysis questions:
+   - Begin each solution with a one-line "Approach:" summarising the algorithm.
+   - Give pseudocode or key implementation steps in \\begin{{verbatim}} when helpful.
+   - State time and space complexity explicitly (Big-O with problem variables).
+   - Discuss edge cases, overflow, indexing, and why naive approaches fail.
+   - Do not dump full 200-line source code—focus on what a strong trainee would write in contest notes.
+7. If a solution required inference beyond the problem statement, label it
    "(AI-generated solution)" after that solution.
-7. Add a title such as "{topic} — Worked Solutions".
-8. Keep core solutions minimal but clear.
-9. Do not include the "Sources consulted" section from the worksheet.
+8. Add a title such as "{topic} — Worked Solutions".
+9. Keep conceptual solutions minimal but clear.
+10. Do not include the "Sources consulted" section from the worksheet.
 {diagram_solutions}
 
 {latex_rules(diagram_mode)}
@@ -772,7 +912,13 @@ Requirements:
         instruction=instruction,
         data=questions_worksheet,
     )
-    expected_questions = num_core + num_challenge + num_tech_active
+    expected_questions = (
+        num_conceptual
+        + num_contest_easy
+        + num_contest_medium
+        + num_contest_hard
+        + num_tech_active
+    )
     config = generation_config(
         response_mime_type="text/plain",
         temperature=0.1 if diagram_mode else 0.15,
@@ -805,7 +951,7 @@ Requirements:
         parts.append(part_text)
         merged = join_solution_parts(parts)
         truncated = response is not None and response_hit_token_limit(response)
-        complete = solutions_document_complete(merged) and not truncated
+        complete = solutions_document_complete(merged, questions_worksheet) and not truncated
 
         logger.info(
             "Solutions part %d: %d chars (merged total %d chars, complete=%s, truncated=%s)",
@@ -826,22 +972,24 @@ Requirements:
         tail = merged[-2000:]
         continuation_prompt = build_solutions_continuation_prompt(
             topic,
-            num_core,
-            num_challenge,
+            num_conceptual,
+            num_contest_easy,
+            num_contest_medium,
+            num_contest_hard,
             num_tech_active,
             tail,
         )
         request_kwargs["contents"] = continuation_prompt
 
     merged = join_solution_parts(parts)
-    if solutions_document_complete(merged):
+    if solutions_document_complete(merged, questions_worksheet):
         validate_solutions_document(merged, questions_worksheet, expected_questions)
         return merged
 
     raise TruncatedResponseError(
         f"Solutions still incomplete after {len(parts)} part(s) "
         f"({len(merged)} chars). Last finish was truncated={truncated}. "
-        "Try STEP='solutions' again or use HW_worksheet_generator.py (split sections)."
+        "Try STEP='solutions' again to continue from the partial output."
     )
 
 
@@ -899,10 +1047,14 @@ def run_research_step(
     topic: str,
     subtopics: list[str],
     output_dir: Path = OUTPUT_DIR,
-    core_per_subtopic: int = CORE_QUESTIONS_PER_SUBTOPIC,
-    challenge_per_subtopic: int = CHALLENGE_QUESTIONS_PER_SUBTOPIC,
+    conceptual_per_subtopic: int = CONCEPTUAL_QUESTIONS_PER_SUBTOPIC,
+    contest_easy_per_subtopic: int = CONTEST_EASY_QUESTIONS_PER_SUBTOPIC,
+    contest_medium_per_subtopic: int = CONTEST_MEDIUM_QUESTIONS_PER_SUBTOPIC,
+    contest_hard_per_subtopic: int = CONTEST_HARD_QUESTIONS_PER_SUBTOPIC,
     tech_active_per_subtopic: int = TECH_ACTIVE_QUESTIONS_PER_SUBTOPIC,
-    contest_level: str = CONTEST_LEVEL,
+    contest_level_easy: str = CONTEST_LEVEL_EASY,
+    contest_level_medium: str = CONTEST_LEVEL_MEDIUM,
+    contest_level_hard: str = CONTEST_LEVEL_HARD,
     diagram_mode: bool = DIAGRAM_MODE,
     diagrams_per_subtopic: int = DIAGRAMS_PER_SUBTOPIC,
 ) -> Path:
@@ -920,10 +1072,14 @@ def run_research_step(
             client,
             topic,
             cleaned,
-            core_per_subtopic,
-            challenge_per_subtopic,
+            conceptual_per_subtopic,
+            contest_easy_per_subtopic,
+            contest_medium_per_subtopic,
+            contest_hard_per_subtopic,
             tech_active_per_subtopic,
-            contest_level,
+            contest_level_easy,
+            contest_level_medium,
+            contest_level_hard,
             diagram_mode,
             diagrams_per_subtopic,
         )
@@ -936,10 +1092,14 @@ def run_questions_step(
     topic: str,
     subtopics: list[str],
     output_dir: Path = OUTPUT_DIR,
-    core_per_subtopic: int = CORE_QUESTIONS_PER_SUBTOPIC,
-    challenge_per_subtopic: int = CHALLENGE_QUESTIONS_PER_SUBTOPIC,
+    conceptual_per_subtopic: int = CONCEPTUAL_QUESTIONS_PER_SUBTOPIC,
+    contest_easy_per_subtopic: int = CONTEST_EASY_QUESTIONS_PER_SUBTOPIC,
+    contest_medium_per_subtopic: int = CONTEST_MEDIUM_QUESTIONS_PER_SUBTOPIC,
+    contest_hard_per_subtopic: int = CONTEST_HARD_QUESTIONS_PER_SUBTOPIC,
     tech_active_per_subtopic: int = TECH_ACTIVE_QUESTIONS_PER_SUBTOPIC,
-    contest_level: str = CONTEST_LEVEL,
+    contest_level_easy: str = CONTEST_LEVEL_EASY,
+    contest_level_medium: str = CONTEST_LEVEL_MEDIUM,
+    contest_level_hard: str = CONTEST_LEVEL_HARD,
     diagram_mode: bool = DIAGRAM_MODE,
     diagrams_per_subtopic: int = DIAGRAMS_PER_SUBTOPIC,
 ) -> Path:
@@ -958,10 +1118,14 @@ def run_questions_step(
             topic,
             cleaned,
             research_notes,
-            core_per_subtopic,
-            challenge_per_subtopic,
+            conceptual_per_subtopic,
+            contest_easy_per_subtopic,
+            contest_medium_per_subtopic,
+            contest_hard_per_subtopic,
             tech_active_per_subtopic,
-            contest_level,
+            contest_level_easy,
+            contest_level_medium,
+            contest_level_hard,
             diagram_mode,
             diagrams_per_subtopic,
         )
@@ -974,10 +1138,14 @@ def run_solutions_step(
     topic: str,
     subtopics: list[str],
     output_dir: Path = OUTPUT_DIR,
-    core_per_subtopic: int = CORE_QUESTIONS_PER_SUBTOPIC,
-    challenge_per_subtopic: int = CHALLENGE_QUESTIONS_PER_SUBTOPIC,
+    conceptual_per_subtopic: int = CONCEPTUAL_QUESTIONS_PER_SUBTOPIC,
+    contest_easy_per_subtopic: int = CONTEST_EASY_QUESTIONS_PER_SUBTOPIC,
+    contest_medium_per_subtopic: int = CONTEST_MEDIUM_QUESTIONS_PER_SUBTOPIC,
+    contest_hard_per_subtopic: int = CONTEST_HARD_QUESTIONS_PER_SUBTOPIC,
     tech_active_per_subtopic: int = TECH_ACTIVE_QUESTIONS_PER_SUBTOPIC,
-    contest_level: str = CONTEST_LEVEL,
+    contest_level_easy: str = CONTEST_LEVEL_EASY,
+    contest_level_medium: str = CONTEST_LEVEL_MEDIUM,
+    contest_level_hard: str = CONTEST_LEVEL_HARD,
     diagram_mode: bool = DIAGRAM_MODE,
     diagrams_per_subtopic: int = DIAGRAMS_PER_SUBTOPIC,
 ) -> Path:
@@ -996,10 +1164,14 @@ def run_solutions_step(
             topic,
             cleaned,
             questions_tex,
-            core_per_subtopic,
-            challenge_per_subtopic,
+            conceptual_per_subtopic,
+            contest_easy_per_subtopic,
+            contest_medium_per_subtopic,
+            contest_hard_per_subtopic,
             tech_active_per_subtopic,
-            contest_level,
+            contest_level_easy,
+            contest_level_medium,
+            contest_level_hard,
             diagram_mode,
             diagrams_per_subtopic,
         )
@@ -1011,10 +1183,14 @@ def generate_worksheets(
     topic: str,
     subtopics: list[str],
     output_dir: Path = OUTPUT_DIR,
-    core_per_subtopic: int = CORE_QUESTIONS_PER_SUBTOPIC,
-    challenge_per_subtopic: int = CHALLENGE_QUESTIONS_PER_SUBTOPIC,
+    conceptual_per_subtopic: int = CONCEPTUAL_QUESTIONS_PER_SUBTOPIC,
+    contest_easy_per_subtopic: int = CONTEST_EASY_QUESTIONS_PER_SUBTOPIC,
+    contest_medium_per_subtopic: int = CONTEST_MEDIUM_QUESTIONS_PER_SUBTOPIC,
+    contest_hard_per_subtopic: int = CONTEST_HARD_QUESTIONS_PER_SUBTOPIC,
     tech_active_per_subtopic: int = TECH_ACTIVE_QUESTIONS_PER_SUBTOPIC,
-    contest_level: str = CONTEST_LEVEL,
+    contest_level_easy: str = CONTEST_LEVEL_EASY,
+    contest_level_medium: str = CONTEST_LEVEL_MEDIUM,
+    contest_level_hard: str = CONTEST_LEVEL_HARD,
     diagram_mode: bool = DIAGRAM_MODE,
     diagrams_per_subtopic: int = DIAGRAMS_PER_SUBTOPIC,
     step: str = STEP,
@@ -1025,10 +1201,14 @@ def generate_worksheets(
         subtopics,
         step,
         output_dir,
-        core_per_subtopic,
-        challenge_per_subtopic,
+        conceptual_per_subtopic,
+        contest_easy_per_subtopic,
+        contest_medium_per_subtopic,
+        contest_hard_per_subtopic,
         tech_active_per_subtopic,
-        contest_level,
+        contest_level_easy,
+        contest_level_medium,
+        contest_level_hard,
         diagram_mode,
         diagrams_per_subtopic,
     )
@@ -1045,10 +1225,14 @@ def generate_worksheets(
             topic,
             subtopics,
             output_dir,
-            core_per_subtopic,
-            challenge_per_subtopic,
+            conceptual_per_subtopic,
+            contest_easy_per_subtopic,
+            contest_medium_per_subtopic,
+            contest_hard_per_subtopic,
             tech_active_per_subtopic,
-            contest_level,
+            contest_level_easy,
+            contest_level_medium,
+            contest_level_hard,
             diagram_mode,
             diagrams_per_subtopic,
         )},
@@ -1056,10 +1240,14 @@ def generate_worksheets(
             topic,
             subtopics,
             output_dir,
-            core_per_subtopic,
-            challenge_per_subtopic,
+            conceptual_per_subtopic,
+            contest_easy_per_subtopic,
+            contest_medium_per_subtopic,
+            contest_hard_per_subtopic,
             tech_active_per_subtopic,
-            contest_level,
+            contest_level_easy,
+            contest_level_medium,
+            contest_level_hard,
             diagram_mode,
             diagrams_per_subtopic,
         )},
@@ -1067,10 +1255,14 @@ def generate_worksheets(
             topic,
             subtopics,
             output_dir,
-            core_per_subtopic,
-            challenge_per_subtopic,
+            conceptual_per_subtopic,
+            contest_easy_per_subtopic,
+            contest_medium_per_subtopic,
+            contest_hard_per_subtopic,
             tech_active_per_subtopic,
-            contest_level,
+            contest_level_easy,
+            contest_level_medium,
+            contest_level_hard,
             diagram_mode,
             diagrams_per_subtopic,
         )},
@@ -1079,10 +1271,14 @@ def generate_worksheets(
                 topic,
                 subtopics,
                 output_dir,
-                core_per_subtopic,
-                challenge_per_subtopic,
+                conceptual_per_subtopic,
+                contest_easy_per_subtopic,
+                contest_medium_per_subtopic,
+                contest_hard_per_subtopic,
                 tech_active_per_subtopic,
-                contest_level,
+                contest_level_easy,
+                contest_level_medium,
+                contest_level_hard,
                 diagram_mode,
                 diagrams_per_subtopic,
             ),
@@ -1090,10 +1286,14 @@ def generate_worksheets(
                 topic,
                 subtopics,
                 output_dir,
-                core_per_subtopic,
-                challenge_per_subtopic,
+                conceptual_per_subtopic,
+                contest_easy_per_subtopic,
+                contest_medium_per_subtopic,
+                contest_hard_per_subtopic,
                 tech_active_per_subtopic,
-                contest_level,
+                contest_level_easy,
+                contest_level_medium,
+                contest_level_hard,
                 diagram_mode,
                 diagrams_per_subtopic,
             ),
@@ -1101,10 +1301,14 @@ def generate_worksheets(
                 topic,
                 subtopics,
                 output_dir,
-                core_per_subtopic,
-                challenge_per_subtopic,
+                conceptual_per_subtopic,
+                contest_easy_per_subtopic,
+                contest_medium_per_subtopic,
+                contest_hard_per_subtopic,
                 tech_active_per_subtopic,
-                contest_level,
+                contest_level_easy,
+                contest_level_medium,
+                contest_level_hard,
                 diagram_mode,
                 diagrams_per_subtopic,
             ),

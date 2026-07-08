@@ -380,3 +380,899 @@ SUBTOPICS = [
     'Stationary distribution for Markov jump processes',
     'Poisson process'
 ]
+
+# 2026-06-16 15:54:45
+TOPIC = 'Machine learning'
+SUBTOPICS = [
+    'Lasso regressin',
+    'Ridge regression (and comparison to Lasso)',
+    'Supervised vs unsupervised learning',
+    'Support Vector machines',
+    'Gradient Descent',
+    'PCA'
+]
+
+# 2026-06-16 15:55:19
+TOPIC = 'Machine learning'
+SUBTOPICS = [
+    'Lasso regressin',
+    'Ridge regression (and comparison to Lasso)',
+    'Supervised vs unsupervised learning',
+    'Support Vector machines',
+    'Gradient Descent',
+    'PCA'
+]
+
+# 2026-06-16 15:55:25
+TOPIC = 'Machine learning'
+SUBTOPICS = [
+    'Lasso regressin',
+    'Ridge regression (and comparison to Lasso)',
+    'Supervised vs unsupervised learning',
+    'Support Vector machines',
+    'Gradient Descent',
+    'PCA'
+]
+
+# 2026-06-16 23:08:44
+TOPIC = 'Discrete time stochastic processes'
+SUBTOPICS = [
+    'Random walks',
+    'Martingales',
+    'Martingales in random walks',
+    'Product of independent random variables',
+    'Gain process',
+    'Optional stopping theorem',
+    'Discrete time Cramer-Lundberg model',
+    'Super and submartingale'
+]
+
+# 2026-06-16 23:09:24
+TOPIC = 'Discrete time stochastic processes'
+SUBTOPICS = [
+    'Random walks',
+    'Martingales',
+    'Martingales in random walks',
+    'Product of independent random variables',
+    'Gain process',
+    'Optional stopping theorem',
+    'Discrete time Cramer-Lundberg model',
+    'Super and submartingale'
+]
+
+# 2026-06-17 00:08:06
+TOPIC = 'Brownian motion'
+SUBTOPICS = [
+    'Brownian motion',
+    'Gaussian processes',
+    'Arithmetic and geometric Brownian motin',
+    'Continuous time martingales',
+    'Brownian motion and martingales'
+]
+
+# 2026-06-17 10:20:53
+TOPIC = 'Brownian motion'
+SUBTOPICS = [
+    'Brownian motion',
+    'Gaussian processes',
+    'Arithmetic and geometric Brownian motin',
+    'Continuous time martingales',
+    'Brownian motion and martingales'
+]
+
+# 2026-06-17 11:21:49
+TOPIC = 'Change of probability measure'
+SUBTOPICS = [
+    'Change of measure of discrete random variables',
+    'Equivalent probability measures',
+    'Derivative of Q with respect to P',
+    'Change of measure for continuous random variables',
+    'Change of measure for Brownian motion'
+]
+
+# 2026-06-17 11:26:22
+TOPIC = 'Change of probability measure'
+SUBTOPICS = [
+    'Change of measure of discrete random variables',
+    'Equivalent probability measures',
+    'Derivative of Q with respect to P',
+    'Change of measure for continuous random variables',
+    'Change of measure for Brownian motion'
+]
+
+# 2026-06-17 11:36:54
+TOPIC = 'Options'
+SUBTOPICS = [
+    'Problems with Option pricing',
+    'One period binomial Option pricing via replication',
+    'One period binomial option pricing via EMM',
+    'Discrete Self financing portfolio',
+    'Multi-period Binomial Models via replication',
+    'Multi-period Binomial Models via EMM'
+]
+
+# 2026-06-17 11:37:12
+TOPIC = 'Options'
+SUBTOPICS = [
+    'Problems with Option pricing',
+    'One period binomial Option pricing via replication',
+    'One period binomial option pricing via EMM',
+    'Discrete Self financing portfolio',
+    'Multi-period Binomial Models via replication',
+    'Multi-period Binomial Models via EMM'
+]
+
+# 2026-06-17 13:18:40
+TOPIC = 'Fundamental theorems of asset pricing'
+SUBTOPICS = [
+    'Formal definition of artbitrage',
+    'Market completeness',
+    'First fundamental theorem of asset pricing',
+    'Second fundamental theorem of asset pricing'
+]
+
+# 2026-06-17 13:19:25
+TOPIC = 'Options'
+SUBTOPICS = [
+    'Problems with Option pricing',
+    'One period binomial Option pricing via replication',
+    'One period binomial option pricing via EMM',
+    'Discrete Self financing portfolio',
+    'Multi-period Binomial Models via replication',
+    'Multi-period Binomial Models via EMM'
+]
+
+# 2026-06-17 13:21:51
+TOPIC = 'Black Scholes option pricing'
+SUBTOPICS = [
+    'Continuous self financing portfolios',
+    'Martingale Property of continuous self financing portfolios',
+    'Black Scholes PDE',
+    'Black Scholes EMM',
+    'Black Scholes option pricing formula'
+]
+
+# 2026-06-17 13:57:55
+TOPIC = 'Stochastic differential equations'
+SUBTOPICS = [
+    'Ordinary differential equations',
+    'Stochastic differential equations',
+    "Solving SDE's using Ito's formula",
+    "Ito's formula: two variables",
+    'Stochastic product rule',
+    'Ornstein-Uhlenbeck process',
+    "Vasicek's model for interest rates"
+]
+
+# 2026-06-17 13:58:45
+TOPIC = 'Stochastic calculus'
+SUBTOPICS = [
+    'Types of integrals',
+    'Non differentiability of Brownian motion',
+    'Ito integral',
+    'Integration with respect to Brownian motion',
+    'Ito integrals',
+    'Ito integral properties',
+    "Ito's formula",
+    'Ito integrals and martingale property'
+]
+
+# 2026-06-17 16:48:50
+TOPIC = 'First Fundamental theorem of abelian groups'
+SUBTOPICS = [
+    'Fundamental theorem for finitely generated abelian groups',
+    'Finding the number of abelian of size n',
+    'Abelian invariants',
+    'Primary decomposition theorem',
+    'Smith normal form'
+]
+
+# 2026-06-17 16:49:29
+TOPIC = 'First Fundamental theorem of abelian groups'
+SUBTOPICS = [
+    'Fundamental theorem for finitely generated abelian groups',
+    'Finding the number of abelian of size n',
+    'Abelian invariants',
+    'Primary decomposition theorem',
+    'Smith normal form'
+]
+
+# 2026-06-17 16:50:42
+TOPIC = 'First Fundamental theorem of abelian groups'
+SUBTOPICS = [
+    'Fundamental theorem for finitely generated abelian groups',
+    'Finding the number of abelian of size n',
+    'Abelian invariants',
+    'Primary decomposition theorem',
+    'Smith normal form'
+]
+
+# 2026-06-17 17:25:40
+TOPIC = 'Group presentations'
+SUBTOPICS = [
+    'Group presentation definition',
+    'Normal closure',
+    "Von Dyck's theorem",
+    'Finding group size and other properties when given a presentation',
+    'Word problem and group presentations'
+]
+
+# 2026-06-17 19:56:27
+TOPIC = 'Probability'
+SUBTOPICS = [
+    'Sample space',
+    'Equally likely outcomes',
+    'Tree diagrams'
+]
+
+# 2026-06-17 19:56:55
+TOPIC = 'Probability'
+SUBTOPICS = [
+    'Sample space',
+    'Equally likely outcomes',
+    'Tree diagrams'
+]
+
+# 2026-06-17 20:51:13
+TOPIC = 'Probability_Yr8'
+SUBTOPICS = [
+    'Sample space',
+    'Equally likely outcomes',
+    'Tree diagrams',
+    'Venn diagram and two way tables'
+]
+
+# 2026-06-18 14:40:40
+TOPIC = 'Change of probability measure'
+SUBTOPICS = [
+    'Change of measure of discrete random variables',
+    'Equivalent probability measures',
+    'Derivative of Q with respect to P',
+    'Change of measure for continuous random variables',
+    'Change of measure for Brownian motion',
+    'Girsanov theorem'
+]
+
+# 2026-06-18 14:40:41
+TOPIC = 'Change of probability measure'
+SUBTOPICS = [
+    'Change of measure of discrete random variables',
+    'Equivalent probability measures',
+    'Derivative of Q with respect to P',
+    'Change of measure for continuous random variables',
+    'Change of measure for Brownian motion',
+    'Girsanov theorem'
+]
+
+# 2026-06-18 14:40:58
+TOPIC = 'Graph Algorithms'
+SUBTOPICS = [
+    'BFS and DFS',
+    'Shortest paths',
+    'Union-Find (Disjoint Set Union)',
+    'Topological sort'
+]
+
+# 2026-06-18 22:44:04
+TOPIC = 'Misc topics'
+SUBTOPICS = [
+    'Numbers of Groups of small size (and what they are)'
+]
+
+# 2026-06-18 22:44:16
+TOPIC = 'Misc topics'
+SUBTOPICS = [
+    'Numbers of Groups of small size (and what they are)'
+]
+
+# 2026-06-18 22:47:19
+TOPIC = 'Free groups'
+SUBTOPICS = [
+    'Free group construction',
+    'Free group property – map is injective and more',
+    'Existence of free groups for a given set',
+    'Free groups isomorphic iff underlying sets have equal size',
+    'Determining if a group is free',
+    'Reduced words for element in F_X',
+    'Every group is a quotient of some free group'
+]
+
+# 2026-06-18 23:30:03
+TOPIC = "Week 8 part II - Sylow's theorem"
+SUBTOPICS = [
+    "Sylow's theorem",
+    'P-group',
+    'Sylow p-subgroups',
+    'Sylow subgroups of direct products'
+]
+
+# 2026-06-18 23:30:12
+TOPIC = "Week 8 part II - Sylow's theorem"
+SUBTOPICS = [
+    "Sylow's theorem",
+    'P-group',
+    'Sylow p-subgroups',
+    'Sylow subgroups of direct products'
+]
+
+# 2026-06-19 00:06:39
+TOPIC = 'Week 8 Part I – Burnside Lemma'
+SUBTOPICS = [
+    "Burnside's Lemma",
+    "BS Lemma Corollary I – Jordan's Theorem on Transitive Actions",
+    "Burnside Lemma corollary II – Jordan's Theorem on Conjugates",
+    'Burnside Lemma corollary III - The Least Prime Divisor Theorem',
+    'Burnsides Lemma in combinatorial problems'
+]
+
+# 2026-06-19 00:07:10
+TOPIC = 'Week 8 Part I – Burnside Lemma'
+SUBTOPICS = [
+    "Burnside's Lemma",
+    "BS Lemma Corollary I – Jordan's Theorem on Transitive Actions",
+    "Burnside Lemma corollary II – Jordan's Theorem on Conjugates",
+    'Burnside Lemma corollary III - The Least Prime Divisor Theorem',
+    'Burnsides Lemma in combinatorial problems'
+]
+
+# 2026-06-19 00:07:16
+TOPIC = 'Week 8 Part I – Burnside Lemma'
+SUBTOPICS = [
+    "Burnside's Lemma",
+    "BS Lemma Corollary I – Jordan's Theorem on Transitive Actions",
+    "Burnside Lemma corollary II – Jordan's Theorem on Conjugates",
+    'Burnside Lemma corollary III - The Least Prime Divisor Theorem',
+    'Burnsides Lemma in combinatorial problems'
+]
+
+# 2026-06-19 00:25:51
+TOPIC = 'Week 8 Part I – Burnside Lemma'
+SUBTOPICS = [
+    "Burnside's Lemma",
+    "BS Lemma Corollary I – Jordan's Theorem on Transitive Actions",
+    "Burnside Lemma corollary II – Jordan's Theorem on Conjugates",
+    'Burnside Lemma corollary III - The Least Prime Divisor Theorem',
+    'Burnsides Lemma in combinatorial problems'
+]
+
+# 2026-06-19 00:37:32
+TOPIC = 'Week 6 + 7 – Group actions and orbit stabiliser theorem'
+SUBTOPICS = [
+    'Group actions',
+    'Orbits',
+    'Stabiliser',
+    'Fixed points',
+    'Group action types – Faithful, regular, transitive',
+    'Orbit stabiliser theorem',
+    'Conjugation action',
+    "Cayley's theorem",
+    'Centraliser'
+]
+
+# 2026-06-19 10:16:59
+TOPIC = 'Week 8 Part I – Burnside Lemma'
+SUBTOPICS = [
+    "Burnside's Lemma",
+    "BS Lemma Corollary I – Jordan's Theorem on Transitive Actions",
+    "Burnside Lemma corollary II – Jordan's Theorem on Conjugates",
+    'Burnside Lemma corollary III - The Least Prime Divisor Theorem',
+    'Burnsides Lemma in combinatorial problems'
+]
+
+# 2026-06-19 10:19:14
+TOPIC = 'Week 6 + 7 – Group actions and orbit stabiliser theorem'
+SUBTOPICS = [
+    'Group actions',
+    'Orbits',
+    'Stabiliser',
+    'Fixed points',
+    'Group action types – Faithful, regular, transitive',
+    'Orbit stabiliser theorem',
+    'Conjugation action',
+    "Cayley's theorem",
+    'Centraliser'
+]
+
+# 2026-06-19 10:31:52
+TOPIC = 'Week 5 – Isomorphism theorem'
+SUBTOPICS = [
+    'Isomorphism theorem',
+    'Second isomorphism theorem: HN/N isomorphic to H/H intersection N',
+    'Using isomorphism theorem to prove that 2 groups are isomorphic'
+]
+
+# 2026-06-19 10:45:40
+TOPIC = 'Week 4 II – Homomorphisms'
+SUBTOPICS = [
+    'Homomorphisms',
+    'Homomorphism types – monomorphism, epimorphism, isomorphism, automorphism',
+    'Natural homomorphism of normal subgroups',
+    'Kernel is a subgroup of G and Image is a subgroup of H',
+    'Injectivity-Kernel equivalence',
+    'Homomorphism on a group generated by X uniquely determined by images of those generators',
+    'Homomorphism property – f(1)=1 and f(g^-1)=(f(g))^-1',
+    'Homomorphism Domain properties – If U is a (normal) subgroup of G, then f(U) is a (normal) subgroup of H & preimage of (normal) subgroup of V is a (normal) subgroup',
+    'Correspondence theorem'
+]
+
+# 2026-06-19 10:59:35
+TOPIC = 'Week 4 Part I – Factor groups'
+SUBTOPICS = [
+    'Factor groups',
+    'Normal subgroups',
+    'Product of subgroups',
+    'Normal subgroup properties – closed under Intersection, etc',
+    'Simple groups',
+    'Composition series',
+    'Checking if subgroup is normal'
+]
+
+# 2026-06-19 11:12:11
+TOPIC = 'Week 3 – Cosets and transversals'
+SUBTOPICS = [
+    'Coset motivation – solution of linear systems',
+    'Coset definition',
+    'Coset properties – set of all cosets, index',
+    'Coset equality – equality conditions and cosets are equal/disjoint property',
+    'Coset partitioning – cosets partition a group and have the same cardinality',
+    'Lagrange theorem',
+    "Consequences of Lagrange's theorem",
+    'Transversal',
+    'Properties – inverse of right transversal is left transversal',
+    'Index formula'
+]
+
+# 2026-06-19 11:37:28
+TOPIC = 'Week 2 Part III – Cyclic groups'
+SUBTOPICS = [
+    'Cyclic groups',
+    'Element Order',
+    'Cyclic group properties – g^a=g^b iff a congruent to b mod order g, order is a factor of group size, each subgroup is cyclic'
+]
+
+# 2026-06-19 11:43:54
+TOPIC = 'Week 2 Part II – Subgroups'
+SUBTOPICS = [
+    'Subgroup definition',
+    'Subgroup properties – closure under intersection',
+    'Subgroup criterion',
+    'Generated subgroups – all of its representations'
+]
+
+# 2026-06-19 11:51:36
+TOPIC = 'Week 2 Part I – Symmetric groups'
+SUBTOPICS = [
+    'Symmetric group',
+    'If two sets have same size then their Symmetric Groups are isomorphic',
+    'Cycle and disjoint cycle notation',
+    'Symmetric group element decomposition – Unique Disjoint cycle decompsition, transposition decomposition with fixed parity',
+    'Cycle type'
+]
+
+# 2026-06-19 12:02:29
+TOPIC = 'Week 1 – Group basics'
+SUBTOPICS = [
+    'Group definitions',
+    'Properties - Uniqueness of identity and inverse, cancellation law, inverse of products',
+    'Isomorphic Groups',
+    'Direct product',
+    'Bijectivity of left and right multiplication'
+]
+
+# 2026-06-19 14:50:27
+TOPIC = 'Week 2 Part I – Symmetric groups'
+SUBTOPICS = [
+    'Symmetric group',
+    'If two sets have same size then their Symmetric Groups are isomorphic',
+    'Cycle and disjoint cycle notation',
+    'Symmetric group element decomposition – Unique Disjoint cycle decompsition, transposition decomposition with fixed parity',
+    'Cycle type'
+]
+
+# 2026-06-19 14:56:36
+TOPIC = 'Week 1 – Group basics'
+SUBTOPICS = [
+    'Group definitions',
+    'Properties - Uniqueness of identity and inverse, cancellation law, inverse of products',
+    'Isomorphic Groups',
+    'Direct product',
+    'Bijectivity of left and right multiplication'
+]
+
+# 2026-06-19 15:00:25
+TOPIC = 'Week 1 – Group basics'
+SUBTOPICS = [
+    'Group definitions',
+    'Properties - Uniqueness of identity and inverse, cancellation law, inverse of products',
+    'Isomorphic Groups',
+    'Direct product',
+    'Bijectivity of left and right multiplication'
+]
+
+# 2026-06-19 16:20:16
+TOPIC = 'Brownian motion'
+SUBTOPICS = [
+    'Moments of Brownian motion: mean, variance, covariance',
+    'Conditional moments of Brownian motion: mean, variance, covariance'
+]
+
+# 2026-06-19 16:22:28
+TOPIC = 'Brownian motion'
+SUBTOPICS = [
+    'Moments of Brownian motion: mean, variance, covariance',
+    'Conditional moments of Brownian motion: mean, variance, covariance'
+]
+
+# 2026-06-19 17:53:20
+TOPIC = 'Linear part 2'
+SUBTOPICS = [
+    'Linear basics - Complete table, identify rule and sub into rule'
+]
+
+# 2026-06-19 22:02:09
+TOPIC = 'Geometry_test'
+SUBTOPICS = [
+    'Vertically opposite angles'
+]
+
+# 2026-06-19 22:02:42
+TOPIC = 'Geometry_test'
+SUBTOPICS = [
+    'Vertically opposite angles'
+]
+
+# 2026-06-19 22:02:52
+TOPIC = 'Geometry_test'
+SUBTOPICS = [
+    'Vertically opposite angles'
+]
+
+# 2026-06-19 22:14:29
+TOPIC = 'Geometry_test'
+SUBTOPICS = [
+    'Vertically opposite angles'
+]
+
+# 2026-06-19 22:17:40
+TOPIC = 'Power laws and exponents'
+SUBTOPICS = [
+    'Power law I - Addition and subtraction law of exponents',
+    'Power law II – power of a power law',
+    'Power law III - zero power law, a to power of 1 is itself',
+    'Negative indices',
+    'Rational indices',
+    'Combined problems (all basic power laws + negative + rational indices)',
+    'Exponential equations'
+]
+
+# 2026-06-19 22:25:35
+TOPIC = 'Logarithms'
+SUBTOPICS = [
+    'Logarithms basics',
+    'Logarithm laws part I – addition and subtraction law',
+    'Log laws II – logarithm of power',
+    'Logarithm laws III – log of 1, log of base',
+    'Log law 4 – change of base',
+    'Log laws - combined',
+    'Exponential equation using logarithms'
+]
+
+# 2026-06-19 22:56:00
+TOPIC = 'Number theory'
+SUBTOPICS = [
+    'Prime factorisation',
+    'Number of factors formula',
+    'Sum of factors formula',
+    'Product of factors formula',
+    'GCD and LCM basics'
+]
+
+# 2026-06-19 22:56:15
+TOPIC = 'Number theory'
+SUBTOPICS = [
+    'Prime factorisation',
+    'Number of factors formula',
+    'Sum of factors formula',
+    'Product of factors formula',
+    'GCD and LCM basics'
+]
+
+# 2026-06-19 23:55:16
+TOPIC = 'Basic statistics'
+SUBTOPICS = [
+    'Mean',
+    'Median',
+    'Mode'
+]
+
+# 2026-06-19 23:55:57
+TOPIC = 'Basic statistics'
+SUBTOPICS = [
+    'Mean',
+    'Median',
+    'Mode'
+]
+
+# 2026-06-20 11:52:32
+TOPIC = 'Basic statistics'
+SUBTOPICS = [
+    'Mean',
+    'Median',
+    'Mode'
+]
+
+# 2026-06-20 11:53:38
+TOPIC = 'Basic statistics'
+SUBTOPICS = [
+    'Mean',
+    'Median',
+    'Mode'
+]
+
+# 2026-06-21 19:10:17
+TOPIC = 'Stochastic processes'
+SUBTOPICS = [
+    'Stopping times for Discrete Time Random Walks',
+    'Stopping times for Discrete Processes'
+]
+
+# 2026-06-24 15:59:27
+TOPIC = 'C++ syntax '
+SUBTOPICS = [
+    'C++ sort function',
+    'C++ tuple',
+    'C++ vector',
+    'C++ pairs'
+]
+
+# 2026-06-24 16:00:33
+TOPIC = 'C++ syntax '
+SUBTOPICS = [
+    'C++ sort function',
+    'C++ tuple',
+    'C++ vector',
+    'C++ pairs'
+]
+
+# 2026-06-24 16:01:15
+TOPIC = 'C++ syntax '
+SUBTOPICS = [
+    'C++ sort function',
+    'C++ tuple',
+    'C++ vector',
+    'C++ pairs'
+]
+
+# 2026-06-24 16:01:21
+TOPIC = 'C++ syntax '
+SUBTOPICS = [
+    'C++ sort function',
+    'C++ tuple',
+    'C++ vector',
+    'C++ pairs'
+]
+
+# 2026-06-24 16:01:54
+TOPIC = 'C++ syntax '
+SUBTOPICS = [
+    'C++ sort function',
+    'C++ tuple',
+    'C++ vector',
+    'C++ pairs'
+]
+
+# 2026-06-24 16:02:05
+TOPIC = 'Markov Jump processes'
+SUBTOPICS = [
+    'Assumptions behind Markov chains and Markov jump processes',
+    'Generator matrices for Markov jump processes',
+    'Solving Kolmogorov differential equations to find probabilities',
+    'Limiting distribution for Markov jump processes',
+    'Stationary distribution for Markov jump processes',
+    'Poisson process'
+]
+
+# 2026-06-24 16:02:29
+TOPIC = 'C++ syntax '
+SUBTOPICS = [
+    'C++ sort function',
+    'C++ tuple',
+    'C++ vector',
+    'C++ pairs'
+]
+
+# 2026-06-24 16:03:21
+TOPIC = 'C++ syntax '
+SUBTOPICS = [
+    'C++ sort function',
+    'C++ tuple',
+    'C++ vector',
+    'C++ pairs'
+]
+
+# 2026-06-24 17:20:27
+TOPIC = 'Ad hoc'
+SUBTOPICS = [
+    'Ad Hoc problems - general',
+    'Ad Hoc problems - sorting + linear scan'
+]
+
+# 2026-06-24 18:54:23
+TOPIC = 'Unions and intersections'
+SUBTOPICS = [
+    'Venn diagrams',
+    'Two way tables',
+    'Probability using two way tables and Venn diagrams'
+]
+
+# 2026-06-26 12:18:38
+TOPIC = 'Counting'
+SUBTOPICS = [
+    'Counting with addition and subtraction',
+    'Multiplication principle',
+    'Case work',
+    'Counting with permutations',
+    'Counting with combinations'
+]
+
+# 2026-06-26 12:20:39
+TOPIC = 'Counting'
+SUBTOPICS = [
+    'Counting with addition and subtraction',
+    'Multiplication principle',
+    'Case work',
+    'Counting with permutations',
+    'Counting with combinations'
+]
+
+# 2026-06-26 18:23:41
+TOPIC = 'Equations basics'
+SUBTOPICS = [
+    'Linear equations with variable on one side',
+    'Linear equations with variable on both sides',
+    'Linear equations with fractions',
+    'One variable word problems'
+]
+
+# 2026-06-27 18:16:20
+TOPIC = 'Counting'
+SUBTOPICS = [
+    'Counting integers/multiples in a range (inclusive)Venn diagrams counting problemsMultiplication principle',
+    'Case work',
+    'Counting with permutations',
+    'Counting with combinations'
+]
+
+# 2026-06-27 18:21:13
+TOPIC = 'Counting'
+SUBTOPICS = [
+    'Counting integers/multiples in a range (inclusive)',
+    'Venn diagrams counting problems',
+    'Multiplication principle',
+    'Case work',
+    'Counting with permutations',
+    'Counting with combinations'
+]
+
+# 2026-06-27 18:40:58
+TOPIC = 'Quadratic Equations'
+SUBTOPICS = [
+    'Solving basic quadratic equations using linear techniques',
+    'Solving monic quadratic equations by factorisation',
+    'Solving non-monic quadratic equations by factorisation',
+    'Solving monic quadratic equations by completing the square'
+]
+
+# 2026-06-27 18:42:59
+TOPIC = 'Quadratic Equations Ver 2'
+SUBTOPICS = [
+    'Solving basic quadratic equations using linear techniques',
+    'Solving monic quadratic equations by factorisation',
+    'Solving non-monic quadratic equations by factorisation',
+    'Solving monic quadratic equations by completing the square'
+]
+
+# 2026-06-28 18:18:49
+TOPIC = 'Number theory V2'
+SUBTOPICS = [
+    'Prime factorisation',
+    'Number of factors',
+    'Sum of factors',
+    'Product of factors'
+]
+
+# 2026-06-28 21:14:23
+TOPIC = 'Mixed Holiday HW sheet - Algebra'
+SUBTOPICS = [
+    'Number of factors',
+    'Sum of factors',
+    'Completing the square - Monic Quadratics',
+    'Completing the square - Non-Monic Quadratics',
+    'Applications of Completing the square'
+]
+
+# 2026-06-29 14:38:14
+TOPIC = 'Dynamic programming'
+SUBTOPICS = [
+    'DP fundamentals: states, transitions, memoization vs tabulation',
+    '1D linear DP (counting ways, take/skip, running optimum)',
+    'Knapsack and subset-sum style DP',
+    'Grid and table DP'
+]
+
+# 2026-06-30 20:03:23
+TOPIC = 'Binary search'
+SUBTOPICS = [
+    'Binary search on sorted arrays (lower bound, upper bound, first/last)',
+    'Binary search on answer (monotonic predicate and feasibility check)',
+    'Binary search with preprocessing (sorting, coordinate compression)',
+    'Applications combining binary search with greedy or two pointers'
+]
+
+# 2026-06-30 20:04:07
+TOPIC = 'Binary search'
+SUBTOPICS = [
+    'Binary search on sorted arrays (lower bound, upper bound, first/last)',
+    'Binary search on answer (monotonic predicate and feasibility check)',
+    'Binary search with preprocessing (sorting, coordinate compression)',
+    'Applications combining binary search with greedy or two pointers'
+]
+
+# 2026-07-01 12:53:02
+TOPIC = 'Binary search'
+SUBTOPICS = [
+    'Binary search on sorted arrays (lower bound, upper bound, first/last)',
+    'Binary search on answer (monotonic predicate and feasibility check)',
+    'Binary search with preprocessing (sorting, coordinate compression)',
+    'Applications combining binary search with greedy or two pointers'
+]
+
+# 2026-07-01 13:19:56
+TOPIC = 'Query processing'
+SUBTOPICS = [
+    'Prefix sums and difference arrays',
+    'Binary search (sorted arrays and binary search on answer)',
+    'Offline queries and sorting tricks',
+    'Range queries with Fenwick tree or segment tree'
+]
+
+# 2026-07-01 13:20:14
+TOPIC = 'Query processing'
+SUBTOPICS = [
+    'Prefix sums and difference arrays',
+    'Binary search (sorted arrays and binary search on answer)',
+    'Offline queries and sorting tricks',
+    'Range queries with Fenwick tree or segment tree'
+]
+
+# 2026-07-03 15:32:20
+TOPIC = 'Measurement'
+SUBTOPICS = [
+    'Units of Measurement: Metric',
+    'Perimeter of basic shapes: rectangles, triangles, compound shapes',
+    'Area of basic shapes: rectangles, trianglesAreas of basics shapes II: parallelograms, rhombus, trapeziums'
+]
+
+# 2026-07-04 16:50:41
+TOPIC = 'Constructive problems'
+SUBTOPICS = [
+    'Pattern based construction',
+    'Greedy construction',
+    'Recursive construction',
+    'Mathematical/bitwise construction',
+    'Graph/Tree construction'
+]
+
+# 2026-07-07 16:56:17
+TOPIC = 'Quadratics'
+SUBTOPICS = [
+    'Expanding squares of binomials',
+    'Completing the square'
+]
+
+# 2026-07-07 16:56:34
+TOPIC = 'Quadratics: Compelte the square'
+SUBTOPICS = [
+    'Expanding squares of binomials',
+    'Completing the square'
+]
