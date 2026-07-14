@@ -36,20 +36,25 @@ LOG_FILE = OUTPUT_DIR / "cp_worksheet_gen.log"
 logger = logging.getLogger("cp_worksheet")
 
 # --- Edit these before running ---
-TOPIC = "Constructive problems"
+TOPIC = "Number theory"
 SUBTOPICS = [
-    "Pattern based construction",
-    "Greedy construction",
-    "Recursive construction",
+    "Finding factors",
+    "Finding primes ",
+    "Binary exponentiation",
     "Mathematical/bitwise construction",
-    "Graph/Tree construction"
+    "Graph/Tree construction",
+    "Modular inverse",
+    "GCD",
+    "Lowest common multiples",
+    "Chinese remainder theorem",
+    "Mobius inversion"
 ]
 
-CONCEPTUAL_QUESTIONS_PER_SUBTOPIC = 4
-CONTEST_EASY_QUESTIONS_PER_SUBTOPIC = 2
-CONTEST_MEDIUM_QUESTIONS_PER_SUBTOPIC = 2
-CONTEST_HARD_QUESTIONS_PER_SUBTOPIC = 2
-TECH_ACTIVE_QUESTIONS_PER_SUBTOPIC = 1
+CONCEPTUAL_QUESTIONS_PER_SUBTOPIC = 3
+CONTEST_EASY_QUESTIONS_PER_SUBTOPIC = 1
+CONTEST_MEDIUM_QUESTIONS_PER_SUBTOPIC = 1
+CONTEST_HARD_QUESTIONS_PER_SUBTOPIC = 1
+TECH_ACTIVE_QUESTIONS_PER_SUBTOPIC = 0
 # Target difficulty for each contest section — edit freely, e.g. AtCoder ABC C, Codeforces Div. 2 B
 CONTEST_LEVEL_EASY = "AtCoder ABC C"
 CONTEST_LEVEL_MEDIUM = "AtCoder ABC D"

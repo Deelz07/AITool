@@ -1276,3 +1276,11 @@ SUBTOPICS = [
     'Expanding squares of binomials',
     'Completing the square'
 ]
+
+# 2026-07-08 17:54:29
+TOPIC = 'One variable linear applications'
+SUBTOPICS = [
+    'Formulas',
+    'Worded problems',
+    'Linear in disguise: Reciprocal equations'
+]

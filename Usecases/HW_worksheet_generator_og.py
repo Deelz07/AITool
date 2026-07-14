@@ -42,7 +42,8 @@ TOPIC = 'One variable linear applications'
 SUBTOPICS = [
     "Formulas",
     "Worded problems",
-    "Linear in disguise"
+    "Linear in disguise: Reciprocal equations",
+    ""
 ]
 CORE_QUESTIONS_PER_SUBTOPIC = 4
 CHALLENGE_QUESTIONS_PER_SUBTOPIC = 3
@@ -607,6 +608,9 @@ def generate_questions_worksheet(
     num_core = total_questions(cleaned, core_per_subtopic)
     num_challenge = total_questions(cleaned, challenge_per_subtopic)
     num_tech_active = total_questions(cleaned, tech_active_per_subtopic)
+    include_core = num_core > 0
+    include_challenge = num_challenge > 0
+    include_tech_active = num_tech_active > 0
     distribution = format_distribution(
         cleaned, core_per_subtopic, challenge_per_subtopic, tech_active_per_subtopic
     )
@@ -615,26 +619,18 @@ def generate_questions_worksheet(
     diagram_block = diagram_instructions(diagram_mode, diagrams_per_subtopic)
     role = "LaTeX expert, geometry diagram specialist, and contest problem writer" if diagram_mode else "LaTeX expert and contest problem writer"
     preamble = f"You are a {role}. Generate a complete, ready-to-compile .tex file."
-    instruction = f"""
-Create a homework worksheet for the topic "{topic}" using the research notes below.
-
-Subtopics:
-{subtopic_list}
-
-{distribution}
-{diagram_block}
-
-Requirements:
-1. Write original questions only—do not include solutions or answers.
-2. Structure the worksheet into three clearly separated sections:
-
+    sections: list[str] = []
+    if include_core:
+        sections.append(f"""
    **Section A — Core Practice**
    - Use a LaTeX subsection for each subtopic (in the order listed above).
    - In each subsection, include exactly {core_per_subtopic} core questions for that
      subtopic only—no more, no fewer.
    - Number core questions consecutively from 1 to {num_core} across the whole section.
    - Do not let broader or harder subtopics take extra questions.
-
+""")
+    if include_challenge:
+        sections.append(f"""
    **Section B — Challenge Problems (Contest Style)**
    - Add a LaTeX section titled "Challenge Problems (Contest Style)".
    - Use a LaTeX subsection for each subtopic (same order as Section A).
@@ -647,7 +643,9 @@ Requirements:
    - Standalone problems only (no multi-part scaffolding that gives away the method).
    - Use subparts (a), (b), (c) only for UKMT-style multi-stage problems where later
      parts build on earlier results.
-
+""")
+    if include_tech_active:
+        sections.append(f"""
    **Section C — Tech Active (CAS Calculator Required)**
    - Add a LaTeX section titled "Tech Active (CAS Calculator Required)".
    - State clearly at the start of the section: "A CAS calculator is required for this section."
@@ -659,6 +657,24 @@ Requirements:
    - These must be qualitatively different from Section B: do not copy or lightly adapt
      contest problems that CAS would solve without meaningful interpretation.
    - Prefer multi-part questions with modelling, calculator use, and written interpretation.
+""")
+    section_block = "\n".join(sections).rstrip()
+
+    instruction = f"""
+Create a homework worksheet for the topic "{topic}" using the research notes below.
+
+Subtopics:
+{subtopic_list}
+
+{distribution}
+{diagram_block}
+
+Requirements:
+1. Write original questions only—do not include solutions or answers.
+2. Structure the worksheet into sections based on question counts:
+   - If a section has 0 questions allocated, OMIT the entire section completely
+     (no header, no subsections, no placeholder text).
+{section_block}
 
 3. Add a worksheet title matching the topic.
 4. End with a short "Sources consulted" section listing the reputable resources
@@ -689,6 +705,14 @@ def build_solutions_continuation_prompt(
     num_tech_active: int,
     tail: str,
 ) -> str:
+    remaining: list[str] = []
+    if num_core > 0:
+        remaining.append(f"   - Section A core questions through {num_core}")
+    if num_challenge > 0:
+        remaining.append(f"   - Section B challenge problems through C{num_challenge}")
+    if num_tech_active > 0:
+        remaining.append(f"   - Section C tech-active questions through T{num_tech_active}")
+    remaining_block = "\n".join(remaining) if remaining else "   - (No remaining questions)"
     return f"""Continue the LaTeX worked-solutions document for "{topic}" EXACTLY where you stopped.
 
 Rules:
@@ -696,9 +720,7 @@ Rules:
 2. Do NOT repeat any content already written below.
 3. Do NOT output \\documentclass, \\usepackage, or \\begin{{document}} again.
 4. Continue question numbering from where you left off until ALL remaining questions are solved:
-   - Section A core questions through {num_core}
-   - Section B challenge problems through C{num_challenge}
-   - Section C tech-active questions through T{num_tech_active}
+{remaining_block}
 5. End the full document with \\end{{document}} once every question is complete.
 
 Last lines already written (continue immediately after this):
@@ -722,6 +744,9 @@ def generate_solutions_worksheet(
     num_core = total_questions(cleaned, core_per_subtopic)
     num_challenge = total_questions(cleaned, challenge_per_subtopic)
     num_tech_active = total_questions(cleaned, tech_active_per_subtopic)
+    include_core = num_core > 0
+    include_challenge = num_challenge > 0
+    include_tech_active = num_tech_active > 0
     diagram_block = diagram_instructions(diagram_mode, diagrams_per_subtopic)
     diagram_solutions = ""
     if diagram_mode:
@@ -731,19 +756,35 @@ def generate_solutions_worksheet(
     angle bisectors) clarify the working.
 """
     preamble = "You are a LaTeX expert and contest solutions writer. Generate a complete, ready-to-compile .tex file."
+    section_lines: list[str] = []
+    if include_core:
+        section_lines.append(
+            f"   - Section A: solutions for core questions 1 to {num_core}\n"
+            f"     ({core_per_subtopic} per subtopic)"
+        )
+    if include_challenge:
+        section_lines.append(
+            f"   - Section B: solutions for contest-style challenge problems C1 to C{num_challenge}\n"
+            f"     ({challenge_per_subtopic} per subtopic)"
+        )
+    if include_tech_active:
+        section_lines.append(
+            f"   - Section C: solutions for Tech Active questions T1 to T{num_tech_active}\n"
+            f"     ({tech_active_per_subtopic} per subtopic)"
+        )
+    section_block = "\n".join(section_lines) if section_lines else "   - (No questions were allocated; output an empty minimal document.)"
+
     instruction = f"""
 Create a worked-solutions sheet for the topic "{topic}" by solving the questions
 in the worksheet below. Do not invent, reword, or substitute different questions.
 {diagram_block}
 
 Requirements:
-1. Mirror the worksheet structure exactly, including each subtopic subsection:
-   - Section A: solutions for core questions 1 to {num_core}
-     ({core_per_subtopic} per subtopic)
-   - Section B: solutions for contest-style challenge problems C1 to C{num_challenge}
-     ({challenge_per_subtopic} per subtopic)
-   - Section C: solutions for Tech Active questions T1 to T{num_tech_active}
-     ({tech_active_per_subtopic} per subtopic)
+1. Mirror the worksheet structure exactly.
+   - If the worksheet omitted an entire section because it had 0 questions, then OMIT that
+     section from the solutions completely (no header, no subsections, no placeholders).
+   - The included sections are:
+{section_block}
 2. For every question, give the question number/label from the worksheet followed by the
    worked solution. Repeat the full question text only if it is short; otherwise use the
    label (e.g. \\item[12.], \\textbf{{C4.}}, \\textbf{{T2.}}) and \\textbf{{Solution:}}.
@@ -752,7 +793,7 @@ Requirements:
    - Begin each solution with a one-line "Key idea:" stating the insight.
    - Then give a clean solution path a contest student would write under time pressure.
    - Omit tedious arithmetic steps once the method is clear.
-5. For Tech Active (CAS) questions:
+5. For Tech Active (CAS) questions (only if Section C exists in the worksheet):
    - Begin each solution with a one-line "CAS approach:" describing the calculator method.
    - Show representative CAS syntax or menu steps (e.g. solve(), graph + intersection,
      numerical solve, regression).
